@@ -1,10 +1,10 @@
 import "dotenv/config";
 import { WebBrowser } from "langchain/tools/webbrowser";
-// import { initChatModel } from "langchain/chat_models/universal";
 
 
-import { embeddings } from "./embeddings";
-import { model } from "./model";
+import { LlmProviderManager } from './LlmProviderManager';
+const model = await LlmProviderManager.getLlmProvider();
+const embeddings = await LlmProviderManager.getEmbeddingsProvider();
 
 export async function run() {
 
