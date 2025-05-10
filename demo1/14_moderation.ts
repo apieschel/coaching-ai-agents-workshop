@@ -3,7 +3,8 @@ import { OpenAIModerationChain } from "langchain/chains";
 import { PromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 
-import { model } from "./model";
+import { LlmProviderManager } from './LlmProviderManager';
+const model = await LlmProviderManager.getLlmProvider();
 
 const moderation = new OpenAIModerationChain({ throwError: true });
 

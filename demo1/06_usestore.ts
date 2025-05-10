@@ -9,8 +9,9 @@ import {
 } from "@langchain/core/runnables";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 
-import { embeddings } from "./embeddings";
-import { model } from "./model";
+import { LlmProviderManager } from './LlmProviderManager';
+const model = await LlmProviderManager.getLlmProvider();
+const embeddings = await LlmProviderManager.getEmbeddingsProvider();
 
 const vectorStore = await FaissStore.load("./", embeddings);
 

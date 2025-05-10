@@ -1,0 +1,30 @@
+{
+  "name": "langgraphjs-demos",
+  "version": "0.1.0",
+  "description": "Implementation of LangGraphJS workflow tutorials examples from https://langchain-ai.github.io/langgraphjs/tutorials/workflows/",
+  "main": "src/main.ts",
+  "scripts": {
+    "start": "ts-node src/main.ts",
+    "build": "tsc",
+    "prod": "node dist/main.js"
+  },
+  "devDependencies": {
+    "@types/node": "22.12.0",
+    "ts-node": "10.9.2",
+    "typescript": "5.7.3"
+  },
+  "dependencies": {
+    "@aws-sdk/credential-provider-node": "3.806.0",
+    "@langchain/anthropic": "0.3.20",
+    "@langchain/community": "0.3.42",
+    "@langchain/core": "^0.3.55",
+    "@langchain/langgraph": "^0.2.71",
+    "@langchain/ollama": "^0.2.0",
+    "@langchain/openai": "^0.5.10",
+    "@langchain/tavily": "^0.1.1",
+    "@smithy/eventstream-codec": "^2.0.5",
+    "dotenv": "^16.5.0",
+    "inquirer": "^12.6.0",
+    "zod": "^3.24.1"
+  }
+}

@@ -8,7 +8,9 @@ import { PromptTemplate } from "@langchain/core/prompts";
 
 const parser = new StringOutputParser();
 
-import { model } from "./model";
+import { LlmProviderManager } from './LlmProviderManager';
+const model = await LlmProviderManager.getLlmProvider();
+
 
 const stream = await model.pipe(parser).stream("Who wrote the 'Harry Potter' series book?");
 

@@ -3,7 +3,9 @@ import "dotenv/config";
 import { JsonOutputParser } from "@langchain/core/output_parsers";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 
-import { model } from "./model";
+import { LlmProviderManager } from './LlmProviderManager';
+const model = await LlmProviderManager.getLlmProvider();
+
 
 // A query and format instructions used to prompt a language model.
 const jokeQuery = "Tell me a Harry Potter joke.";

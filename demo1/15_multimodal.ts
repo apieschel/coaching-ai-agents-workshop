@@ -1,33 +1,30 @@
 
 
 import "dotenv/config";
-import OpenAI from "openai";
 import * as fs from "node:fs/promises";
 
-const openai = new OpenAI();
+import { LlmProviderManager } from './LlmProviderManager';
+import { HumanMessage } from "@langchain/core/messages";
+const model = await LlmProviderManager.getLlmProvider();
 
 async function main() {
 
   const imageData = await fs.readFile("./images/Harry_Potter_and_the_Philosopher's_Stone_Book_Cover.jpg");
-  const response = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
-    messages: [
+  
+  const message = new HumanMessage({
+    content: [
       {
-        role: "user",
-        content: [
-          { type: "text", text: "What’s in this image?" },
-          {
-            type: "image_url",
-            image_url: {
-                url: `data:image/jpeg;base64,${imageData.toString("base64")}`,
-            //   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg",
-            },
-          },
-        ],
+        type: "text",
+        text: "what does this image contain?",
+      },
+      {
+        type: "image_url",
+        image_url: { url: `data:image/jpeg;base64,${imageData.toString("base64")}` },
       },
     ],
   });
-  console.log(response.choices[0]);
+  const response = await model.invoke([message]);
+  console.log(response.content);
 }
 main();
 

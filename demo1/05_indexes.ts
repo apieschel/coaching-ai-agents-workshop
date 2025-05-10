@@ -6,7 +6,9 @@ import { TextLoader } from "langchain/document_loaders/fs/text";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { FaissStore } from "@langchain/community/vectorstores/faiss";
 
-import { embeddings } from "./embeddings";
+import { LlmProviderManager } from './LlmProviderManager';
+
+const embeddings = await LlmProviderManager.getEmbeddingsProvider();
 
 const loader = new TextLoader("./texts/J. K. Rowling - Harry Potter 1 - Sorcerer's Stone.txt");
 

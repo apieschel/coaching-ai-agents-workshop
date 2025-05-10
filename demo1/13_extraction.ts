@@ -3,7 +3,8 @@ import { z } from "zod";
 import { StructuredOutputParser } from "langchain/output_parsers";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 
-import { model } from "./model";
+import { LlmProviderManager } from './LlmProviderManager';
+const model = await LlmProviderManager.getLlmProvider();
 
 let personSchema = z
   .object({

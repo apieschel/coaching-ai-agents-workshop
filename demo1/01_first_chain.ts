@@ -6,12 +6,12 @@
 */
 
 import "dotenv/config";
-
 import { PromptTemplate } from "@langchain/core/prompts";
 
 import { StringOutputParser } from "@langchain/core/output_parsers";
 
-import { model } from "./model";
+import { LlmProviderManager } from './LlmProviderManager';
+const model = await LlmProviderManager.getLlmProvider();
 
 const joke = await model.invoke(
   "Tell me a Harry Potter joke."

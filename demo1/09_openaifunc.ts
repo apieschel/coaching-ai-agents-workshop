@@ -14,7 +14,8 @@ import { createToolCallingAgent } from "langchain/agents";
 
 import { AgentExecutor } from "langchain/agents";
 
-import { model } from "./model";
+import { LlmProviderManager } from './LlmProviderManager';
+const model = await LlmProviderManager.getLlmProvider();
 
 const todayDateTimeSchema = z.object({
   timeZone: z.string().describe("Time Zone Format"),

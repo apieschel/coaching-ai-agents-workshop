@@ -4,7 +4,9 @@ import { StringOutputParser } from "@langchain/core/output_parsers";
 import { PromptTemplate } from "@langchain/core/prompts";
 import { ConsoleCallbackHandler } from "@langchain/core/tracers/console";
 
-import { model } from "./model";
+import { LlmProviderManager } from './LlmProviderManager';
+const model = await LlmProviderManager.getLlmProvider();
+
 
 
 let reviewPromptTemplate = PromptTemplate.fromTemplate(

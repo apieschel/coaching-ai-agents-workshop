@@ -1,29 +1,46 @@
 
 # Prompt Engineer and the AI Agents in Javascript
 
-Prompts in a language model are like magic spells. You tell the model what you want to talk about or ask, and it generates a magical response based on the input. AI agents are like the wizard who consults their spell book to cast a series of spells. AI Agents use a large language model (LLM) as a reasoning engine to determine which actions to take and in which order. Attend this session to learn how to craft AI Agents in JavaScript using LangChain and other prompt engineering techniques. Alohomora!
+Dear Muggles and Wizarding Folk alike! Prompts in a language model are *exactly* like magic spells - except you won't need to spend 7 years at Hogwarts to master them (though you might spend that long debugging). Just as Harry Potter flicked and swished his wand, you'll type your prompts and watch the magic happen. AI agents are essentially your personal house elves (but without the ethical complications Hermione would protest about) - they consult their spell book (a.k.a. large language model) to determine which actions to take, whether it's fetching data or generating responses faster than you can say "Accio information!" Join us for this session, and you'll be crafting AI Agents in JavaScript using LangChain that would impress even Dumbledore himself. No need for Felix Felicis - your code will be lucky enough on its own! Alohomora! Let's unlock the secrets of AI magic!
 
-## Demo: 
-In this example you find a node app that can be used to learn LangChain in Typescript. This repository contains a series of sample scripts showcasing the usage of Langchain, a JavaScript/Typescript library for creating conversational AI applications.
+## Welcome to Hogwarts School of LangChain and TypeScriptry: 
+In this magical repository, you'll find a collection of spells (node.js scripts) that will help you master the ancient art of LangChain in TypeScript. Just as Harry Potter learned to cast spells at Hogwarts, you'll learn to craft AI agents that can perform magical feats. This repository contains a series of sample scripts that would make even Hermione Granger proud!
 
-- `00_basics.ts`: Introduction to basics of using OpenAI API without Langchain.
-- `01_first_chain.ts`: How to create your first conversation chain in Langchain.
-- `02_simplesequentialchain.ts`: A simple example of creating a sequential conversation chain.
-- `03_sequentialchain.ts`: Detailed walkthrough of creating and utilizing a sequential conversation chain in Langchain.
-- `04_parsers.ts`: How to use parsers to process input and output in a conversation chain.
-- `05_indexes.ts`: How to create and use indexes in Langchain for efficient retrieval of information.
-- `06_usestore.ts`: How to utilize the Vector Databases in Langchain for maintaining and retrieving information which was not trained into the model.
-- `07_chathistory.ts`: How to create a chat bot in Langchain, forming the basis of a conversational AI application.
-- `08_openapichain.ts`: How to use simple open api.
-- `09_openaifunc.js`: How to create an agent in Langchain the uses OpenAI Functions.
-- `10_duckduckgo.js`: How to create a tool that uses duckduckgo.
-- `10_wikipediatool.ts`: How to create a tool that uses wikipedia.
-- `11_webbrowsertool.ts`: Create a tool that invoke web browser to get data.
-- `12_sqltoolkit.ts`: This example shows how to load and use an agent with a SQL toolkit.
-- `13_extraction.ts`: This example shows how to extract and output to json.
-- `14_moderation.ts`: This example shows how to add moderation/filter before sending to LLM.
-- `15_multimodal.ts`: This example shows how to add moderation/filter before sending to LLM.
-- `16_imagegeneration.ts`: How to generate images.
+- `00_basics.ts`: **"Magic Without a Wand"** - Like learning to fly without a broomstick, here's how to use the OpenAI API without Langchain.
+
+- `01_first_chain.ts`: **"Your First Spell"** - Create your first conversation chain in Langchain, about as easy as saying "Wingardium Leviosa" (but do pronounce it correctly, unlike Ron).
+
+- `02_simplesequentialchain.ts`: **"The Marauder's Map"** - A simple guide to creating sequential conversation chains that reveal hidden pathways just like the famous map.
+
+- `03_sequentialchain.ts`: **"Advanced Potions Class"** - Professor Snape would approve of this detailed walkthrough for brewing perfect sequential conversation chains in Langchain.
+
+- `04_parsers.ts`: **"Translating Ancient Runes"** - Learn to use parsers like Hermione deciphering ancient magical texts for processing inputs and outputs.
+
+- `05_indexes.ts`: **"The Hogwarts Library"** - Create and use indexes in Langchain that would make Madam Pince proud for efficiently retrieving information.
+
+- `06_usestore.ts`: **"Dumbledore's Pensieve"** - Store and retrieve memories (information) not trained into the model using Vector Databases, just like extracting thoughts for the Pensieve.
+
+- `07_chathistory.ts`: **"Talking to the Portrait of the Fat Lady"** - Create a chatbot that remembers conversations like the enchanted portraits at Hogwarts.
+
+- `08_openapichain.ts`: **"The Standard Book of Spells"** - How to use simple open APIs, as essential as any first-year textbook.
+
+- `09_openaifunc.ts`: **"Summoning Dobby"** - Create an agent in Langchain that uses OpenAI Functions to appear exactly when you need help.
+
+- `10_duckduckgo.js`: **"Owl Post Service"** - Create a tool that uses DuckDuckGo to deliver information faster than even Hedwig could.
+
+- `10_wikipediatool.ts`: **"The Room of Requirement"** - Build a Wikipedia tool that appears with exactly the information you need, when you need it.
+
+- `11_webbrowsertool.ts`: **"Floo Network"** - Create a tool that transports your agent across the web to gather data, just like wizards traveling via fireplaces.
+
+- `12_sqltoolkit.ts`: **"The Sorting Hat's Algorithm"** - Use SQL tools to organize and retrieve data with the wisdom and precision of the Sorting Hat.
+
+- `13_extraction.ts`: **"Accio Data!"** - Extract and output to JSON with the efficiency of a well-cast Summoning Charm.
+
+- `14_moderation.ts`: **"Defense Against the Dark Arts"** - Add content moderation to protect your LLM from the dark forces of inappropriate content.
+
+- `15_multimodal.ts`: **"The Moving Photographs"** - Work with text and images together, bringing your AI to life like the enchanted photos in the Daily Prophet.
+
+- `16_imagegeneration.ts`: **"Transfiguration Class"** - Transform your textual descriptions into visual imagery, Professor McGonagall would be impressed!
 
 
 To run these examples, clone the git repository and run npm install to install the dependencies. You need to create a .env file and add your API Key for Github Models OpenAI like this: GITHUB_OPENAI_API_KEY==sk-...
