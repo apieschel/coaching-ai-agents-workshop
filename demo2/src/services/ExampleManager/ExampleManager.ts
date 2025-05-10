@@ -13,15 +13,15 @@ import {
 } from "./examples";
 
 export enum ExampleOptions {
-  SIMPLE_AGENT = 'Simple agent',
-  AGENT_BEHAVIOR = 'Agent behavior',
-  BUILDING_BLOCKS = 'Building blocks',
-  PROMPT_CHAINING = 'Prompt chaining',
-  PARALLELIZATION = 'Parallelization',
-  ROUTING = 'Routing',
-  ORCHESTRATOR_WORKER = 'Orchestrator-Worker',
-  EVALUATOR_OPTIMIZER = 'Evaluator-optimizer',
-  AGENT = 'Agent',
+  SIMPLE_AGENT = '1. Simple agent',
+  AGENT_BEHAVIOR = '2. Agent behavior',
+  BUILDING_BLOCKS = '3. Building blocks',
+  PROMPT_CHAINING = '4. Prompt chaining',
+  PARALLELIZATION = '5. Parallelization',
+  ROUTING = '6. Routing',
+  ORCHESTRATOR_WORKER = '7. Orchestrator-Worker',
+  EVALUATOR_OPTIMIZER = '8. Evaluator-optimizer',
+  AGENT = '9. Agent',
 }
 
 export class ExampleManager {
@@ -33,7 +33,7 @@ export class ExampleManager {
       {
         type: 'list',
         name: 'selectedExample',
-        message: 'Elija el ejemplo que desea ejecutar:',
+        message: 'Select an example to run:',
         choices: Object.values(ExampleOptions),
       },
     ]);

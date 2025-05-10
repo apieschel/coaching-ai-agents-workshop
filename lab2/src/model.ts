@@ -1,136 +1,33 @@
-
+import {
+  LlmProviderManager,
+  LlmProvider,
+} from "./LlmProviderManager/LlmProviderManager.js";
 import { BaseChatModel } from "@langchain/core/language_models/chat_models";
-import { ChatOllama } from "@langchain/ollama";
-import { ChatOpenAI } from "@langchain/openai";
-import { ChatAnthropic } from "@langchain/anthropic";
-import { BedrockChat } from "@langchain/community/chat_models/bedrock";
-import inquirer from "inquirer";
 
-export enum LlmProvider {
-  Ollama = 'ollama',
-  OpenAI = 'openai',
-  Github = 'github',
-//  Anthropic = 'anthropic',
-//  Bedrock = 'bedrock',
-}
+// Lazy-loaded model to avoid top-level await
+let modelInstance: BaseChatModel | null = null;
 
-export class LlmProviderManager {
-  static getLlmProvider(llmProvider: LlmProvider): BaseChatModel {
-    switch (llmProvider) {
+// Export the model with async initialization
+export const getModel = async (): Promise<BaseChatModel> => {
+  if (!modelInstance) {
+    modelInstance = await LlmProviderManager.getLlmProvider(LlmProvider.Ollama);
+  }
+  return modelInstance;
+};
 
-      case LlmProvider.Ollama:
-        console.log('OLLAMA_BASE_URL', process.env.OLLAMA_BASE_URL);
-        console.log('OLLAMA_MODEL_NAME', process.env.OLLAMA_MODEL_NAME);
-        console.log('OLLAMA_TEMPERATURE', process.env.OLLAMA_TEMPERATURE);
-        return new ChatOllama({
-          model: process.env.OLLAMA_MODEL_NAME,
-          temperature: parseFloat(process.env.OLLAMA_TEMPERATURE ?? '0.1'),
-          baseUrl: process.env.OLLAMA_BASE_URL,
-        });
-
-      case LlmProvider.OpenAI:
-        console.log('OPENAI_MODEL_NAME', process.env.OPENAI_MODEL_NAME);
-        console.log('OPENAI_TEMPERATURE', process.env.OPENAI_TEMPERATURE);
-        return new ChatOpenAI({
-          model: process.env.OPENAI_MODEL_NAME,
-          temperature: parseFloat(process.env.OPENAI_TEMPERATURE ?? '0.1'),
-        });
-
-      case LlmProvider.Github:
-        console.log('GITHUB_MODEL_NAME', process.env.GITHUB_MODEL_NAME);
-        console.log('GITHUB_TEMPERATURE', process.env.GITHUB_TEMPERATURE);
-        return new ChatOpenAI({
-          modelName: process.env.GITHUB_MODEL_NAME,
-          apiKey: process.env.GITHUB_OPENAI_API_KEY,
-          temperature: parseFloat(process.env.GITHUB_TEMPERATURE ?? '0.1'),
-          configuration: {
-            baseURL: "https://models.inference.ai.azure.com"
-          }
-        });
-
-      // case LlmProvider.Anthropic:
-      //   console.log('ANTHROPIC_MODEL_NAME', process.env.ANTHROPIC_MODEL_NAME);
-      //   console.log('ANTHROPIC_TEMPERATURE', process.env.ANTHROPIC_TEMPERATURE);
-      //   return new ChatAnthropic({
-      //     model: process.env.ANTHROPIC_MODEL_NAME,
-      //     temperature: parseFloat(process.env.ANTHROPIC_TEMPERATURE ?? '0.1'),
-      //   });
-
-      // case LlmProvider.Bedrock:
-      //   console.log('BEDROCK_MODEL_NAME', process.env.BEDROCK_MODEL_NAME);
-      //   console.log('BEDROCK_TEMPERATURE', process.env.BEDROCK_TEMPERATURE);
-      //   return new BedrockChat({
-      //     model: process.env.BEDROCK_MODEL_NAME,
-      //     temperature: parseFloat(process.env.BEDROCK_TEMPERATURE ?? '0.1'),
-      //     region: process.env.AWS_REGION,
-      //     credentials: {
-      //       accessKeyId: process.env.AWS_ACCESS_KEY_ID ?? '',
-      //       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY ?? '',
-      //       sessionToken: process.env.AWS_SESSION_TOKEN,
-      //     }
-      //   });
-        
-      default:
-        throw new Error(`Unsupported LLM provider: ${llmProvider}`);
+// Export a proxy object that will initialize the model when needed
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export const model = {
+  async bindTools(tools: any) {
+    const model = await getModel();
+    if (typeof model.bindTools !== "function") {
+      throw new Error("Model does not support tool binding");
     }
-  }
-
-  static async selectLlmProviderFromUser(): Promise<BaseChatModel> {
-    console.log('\n====================\n');
-
-    const userResponse = await inquirer.prompt([
-      {
-        type: 'list',
-        name: 'selectedProvider',
-        message: 'Elija el proveedor de LLM que desea utilizar:',
-        choices: Object.values(LlmProvider),
-      },
-    ]);
-
-    return LlmProviderManager.getLlmProvider(userResponse.selectedProvider);
-  }
-}
-
-
-
-const { ChatOpenAI } = await import("@langchain/openai");
-export const model = new ChatOpenAI({
-  modelName: "gpt-4o-mini",
-  apiKey: process.env.GITHUB_OPENAI_API_KEY,
-  configuration: {
-    baseURL: "https://models.inference.ai.azure.com"
-  }
-});
-
-
-// import { initChatModel } from "langchain/chat_models/universal";
-// export const model : any = await initChatModel(undefined, {
-//   modelProvider: "groq",
-//   temperature: 0,
-// });
-
-// export const model = await initChatModel("llama3.2", {
-//   modelProvider: "ollama",
-//   temperature: 0,
-// });
-// export const model = await initChatModel("gpt-4", {
-//   modelProvider: "azure_openai",
-//   temperature: 0,
-// });
-// export const model = await initChatModel("gpt-4o", {
-//   modelProvider: "openai",
-//   temperature: 0,
-// });
-// export const model : any = await initChatModel(undefined, {
-//   modelProvider: "groq",
-//   temperature: 0,
-// });
-
-// const { ChatOpenAI } = await import("@langchain/openai");
-// export const model = new ChatOpenAI({
-//   modelName: "gpt-4o-mini",
-//   apiKey: process.env.GITHUB_OPENAI_API_KEY,
-//   configuration: {
-//     baseURL: 'https://models.inference.ai.azure.com'
-//   }
-// });
+    return model.bindTools(tools);
+  },
+  async invoke(messages: any) {
+    const model = await getModel();
+    return model.invoke(messages);
+  },
+};
+/* eslint-enable @typescript-eslint/no-explicit-any */

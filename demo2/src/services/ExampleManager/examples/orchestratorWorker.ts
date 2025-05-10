@@ -108,6 +108,7 @@ export async function orchestratorWorker(llm: BaseChatModel) {
     .compile();
 
   // Draw the graph
+  orchestratorWorker.name = "orchestratorWorker";
   MermaidGraph.drawMermaidAsImage(orchestratorWorker);
 
   // Invoke

@@ -78,6 +78,7 @@ export async function evaluatorOptimizer(llm: BaseChatModel){
     .compile();
   
   // Draw the graph
+  optimizerWorkflow.name = "evaluatorOptimizer";
   MermaidGraph.drawMermaidAsImage(optimizerWorkflow);
 
   // Invoke

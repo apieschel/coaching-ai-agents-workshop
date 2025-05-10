@@ -56,6 +56,7 @@ export async function parallelization(llm: BaseChatModel) {
     .compile();
 
   // Draw the graph
+  parallelWorkflow.name = "parallelWorkflow";
   MermaidGraph.drawMermaidAsImage(parallelWorkflow);
 
   // Invoke

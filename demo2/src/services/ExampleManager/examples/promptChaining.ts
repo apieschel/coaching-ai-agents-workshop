@@ -60,6 +60,7 @@ export async function promptChaining(llm: BaseChatModel) {
     .compile();
   
   // Draw the graph
+  chain.name = "promptChaining";
   MermaidGraph.drawMermaidAsImage(chain);
   
   // Invoke

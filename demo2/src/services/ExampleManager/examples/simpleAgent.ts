@@ -28,6 +28,7 @@ export async function executeSimpleAgent(llm: BaseChatModel){
   await MermaidGraph.drawMermaidByConsole(agent);
 
   // Draw the agent graph as an image
+  agent.name = "simpleAgent";
   await MermaidGraph.drawMermaidAsImage(agent);
   
   // Now it's time to use!

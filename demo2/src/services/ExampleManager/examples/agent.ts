@@ -124,6 +124,7 @@ export async function agent(llm: BaseChatModel) {
     .compile();
   
   // Draw the agent graph
+  agentBuilder.name = "agent";
   MermaidGraph.drawMermaidAsImage(agentBuilder);
 
   // Invoke

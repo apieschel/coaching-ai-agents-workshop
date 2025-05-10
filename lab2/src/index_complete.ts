@@ -7,12 +7,12 @@ import {
   StateGraph,
 } from "@langchain/langgraph";
 import { AIMessage, HumanMessage } from "@langchain/core/messages";
-import { TavilySearchResults } from "@langchain/community/tools/tavily_search";
+import { TavilySearch } from "@langchain/tavily";
 
-import { model } from "model.js";
+import { model } from "./model.js";
 
 //#region tools
-const webSearchTool = new TavilySearchResults({
+const webSearchTool = new TavilySearch({
   maxResults: 4,
 });
 const tools = [webSearchTool];
@@ -24,9 +24,22 @@ const toolNode = new ToolNode(tools);
 const callModel = async (state: typeof MessagesAnnotation.State) => {
   const { messages } = state;
 
-  const llmWithTools = model.bindTools(tools);
-  const result = await llmWithTools.invoke(messages);
-  return { messages: [result] };
+  // Ensure model is defined and has bindTools method
+  if (!model || typeof model.bindTools !== "function") {
+    throw new Error(
+      "Model is not properly initialized or does not support tool binding",
+    );
+  }
+
+  try {
+    // Handle the asynchronous bindTools result
+    const llmWithTools = await model.bindTools(tools);
+    const result = await llmWithTools.invoke(messages);
+    return { messages: [result] };
+  } catch (error) {
+    console.error("Error calling model:", error);
+    throw error;
+  }
 };
 //#endregion
 
@@ -61,6 +74,10 @@ const shouldContinue = (state: typeof MessagesAnnotation.State) => {
  */
 
 //#region graph
+// Disable LangChain telemetry to prevent 401 errors
+process.env.LANGCHAIN_TRACING_V2 = "false";
+process.env.LANGCHAIN_CALLBACKS_BACKGROUND = "false";
+
 const workflow = new StateGraph(MessagesAnnotation)
   .addNode("agent", callModel)
   .addEdge(START, "agent")
@@ -73,32 +90,44 @@ export const graph = workflow.compile({
   // only uncomment if running locally
   checkpointer: new MemorySaver(),
 });
-graph.name = "graph";
+// Ensure graph.name is always a string to avoid TypeScript error
+graph.name = graph.name ?? "graph";
 
 //#endregion
 
 //#region draw graph
-import { saveGraphAsImage } from "drawGraph.js";
-await saveGraphAsImage(graph);
+import { saveGraphAsImage } from "./drawGraph.js";
+// Instead of top-level await, we'll create a function
 //#endregion
 
-// Now it's time to use!
-const config = { configurable: { thread_id: "1", userId: "1" } };
-const agentFinalState = await graph.invoke(
-  { messages: [new HumanMessage("what is the current weather in sf")] },
-  { ...config, debug: true },
-);
+// Main function to handle async operations
+async function main() {
+  try {
+    await saveGraphAsImage(graph);
 
-console.log(
-  agentFinalState.messages[agentFinalState.messages.length - 1].content,
-);
+    // Now it's time to use!
+    const config = { configurable: { thread_id: "1", userId: "1" } };
+    const agentFinalState = await graph.invoke(
+      { messages: [new HumanMessage("what is the current weather in sf")] },
+      { ...config, debug: true },
+    );
 
-const agentNextState = await graph.invoke(
-  { messages: [new HumanMessage("what about ny")] },
-  { ...config, debug: true },
-);
+    console.log(
+      agentFinalState.messages[agentFinalState.messages.length - 1].content,
+    );
 
-console.log(
-  agentNextState.messages[agentNextState.messages.length - 1].content,
-);
+    const agentNextState = await graph.invoke(
+      { messages: [new HumanMessage("what about ny")] },
+      { ...config, debug: true },
+    );
 
+    console.log(
+      agentNextState.messages[agentNextState.messages.length - 1].content,
+    );
+  } catch (error) {
+    console.error("An error occurred:", error);
+  }
+}
+
+// Call the main function to execute the code
+main().catch((error) => console.error("Error in main:", error));
