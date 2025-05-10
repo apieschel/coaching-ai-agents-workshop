@@ -1,3 +1,4 @@
+import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
@@ -87,7 +88,7 @@ export function Resources({
                     data-test-id="remove-resource"
                     variant="ghost"
                     size="icon"
-                    onClick={(e) => {
+                    onClick={(e: React.MouseEvent) => {
                       e.stopPropagation();
                       removeResource?.(resource.url);
                     }}

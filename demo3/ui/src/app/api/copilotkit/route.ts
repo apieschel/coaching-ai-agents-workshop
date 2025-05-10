@@ -12,33 +12,6 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const llmAdapter = new OpenAIAdapter({ openai } as any);
 const langsmithApiKey = process.env.LANGSMITH_API_KEY as string;
 
-// const runtime = new CopilotRuntime({
-//   remoteEndpoints: [
-//     // Uncomment this if you want to use LangGraph JS, make sure to
-//     // remove the remote action url below too.
-//     //
-//     langGraphPlatformEndpoint({
-//       deploymentUrl: "http://localhost:8123",
-//       langsmithApiKey: process.env.LANGSMITH_API_KEY || "", // only used in LangGraph Platform deployments
-//       agents: [
-//         {
-//           name: "research_agent",
-//           description: "Research agent",
-//         },
-//         {
-//           name: "research_agent_google_genai",
-//           description: "Research agent",
-//           assistantId: "9dc0ca3b-1aa6-547d-93f0-e21597d2011c",
-//         },
-//       ],
-
-//     }),
-//     // {
-//     //   url: process.env.REMOTE_ACTION_URL || "http://localhost:8000/copilotkit",
-//     // },
-//   ],
-// });
-
 export const POST = async (req: NextRequest) => {
   const searchParams = req.nextUrl.searchParams;
   // const deploymentUrl =

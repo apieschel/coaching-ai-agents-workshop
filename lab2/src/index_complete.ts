@@ -74,10 +74,6 @@ const shouldContinue = (state: typeof MessagesAnnotation.State) => {
  */
 
 //#region graph
-// Disable LangChain telemetry to prevent 401 errors
-process.env.LANGCHAIN_TRACING_V2 = "false";
-process.env.LANGCHAIN_CALLBACKS_BACKGROUND = "false";
-
 const workflow = new StateGraph(MessagesAnnotation)
   .addNode("agent", callModel)
   .addEdge(START, "agent")
