@@ -25,8 +25,10 @@ export default class MermaidGraph {
     const arrayBuffer = await jpegBlob.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // Define the output path
-    const outputPath = path.join(__dirname, "output", `${graph.name}.jpeg`);
+    // Define the output path using import.meta.url instead of __dirname for ES modules
+    const moduleURL = new URL(import.meta.url);
+    const moduleDirPath = path.dirname(new URL(moduleURL).pathname);
+    const outputPath = path.join(moduleDirPath, "output", `${graph.name}.jpeg`);
 
     // Ensure the output directory exists
     fs.mkdirSync(path.dirname(outputPath), { recursive: true });

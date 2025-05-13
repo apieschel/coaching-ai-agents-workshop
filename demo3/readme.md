@@ -19,12 +19,6 @@ Tutorial Video:
 
 First, install the backend dependencies:
 
-### Python SDK
-
-```sh
-cd agent-py
-poetry install
-```
 
 ### JS-SDK
 
@@ -46,11 +40,6 @@ Make sure the OpenAI API Key you provide, supports gpt-4o.
 
 Then, run the demo:
 
-### Python
-
-```sh
-poetry run demo
-```
 
 ## Running the UI
 
@@ -99,7 +88,7 @@ If you're using the JS agent, follow the steps and uncomment the code inside the
 
 ## Usage
 
-Navigate to [http://localhost:3000](http://localhost:3000).
+Navigate to [http://localhost:3001](http://localhost:3001).
 
 # LangGraph Studio
 

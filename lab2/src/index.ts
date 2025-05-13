@@ -1,4 +1,4 @@
-// code here
+// LangGraph Agent Example using LangChain Tools and StateGraph
 import { ToolNode } from "@langchain/langgraph/prebuilt";
 import {
   END,
@@ -14,11 +14,15 @@ import { Calculator } from "@langchain/community/tools/calculator";
 import { z } from "zod";
 import { tool } from "@langchain/core/tools";
 
+//#region model
 import {
   LlmProviderManager,
   LlmProvider,
 } from "./LlmProviderManager/LlmProviderManager.js";
+
 const model = await LlmProviderManager.getLlmProvider(LlmProvider.Github);
+
+//#endregion model
 
 const webSearchTool = new TavilySearch({
   maxResults: 4,
@@ -91,6 +95,7 @@ const callModel = async (state: typeof MessagesAnnotation.State) => {
   return { messages: [result] };
 };
 
+//#region workflow
 const shouldContinue = (state: typeof MessagesAnnotation.State) => {
   const { messages } = state;
   const lastMessage = messages[messages.length - 1];
@@ -111,18 +116,22 @@ const workflow = new StateGraph(MessagesAnnotation)
   .addConditionalEdges("agent", shouldContinue, ["tools", END]);
 
 export const graph = workflow.compile({
-  // Uncomment if running locally
+  // Memory saver for local execution and state persistence
   checkpointer: new MemorySaver(),
 });
 graph.name = graph.name ?? "default_graph";
+//#endregion workflow
 
-import MermaidGraph from "./MermaidGraph/MermaidGraph.js";
 
+//#region execution
 // Create main function to execute the code
+import MermaidGraph from "./MermaidGraph/MermaidGraph.js";
 async function main() {
   try {
     // Draw the agent graph
+    graph.name = "agent";
     await MermaidGraph.drawMermaidByConsole(graph);
+    await MermaidGraph.drawMermaidAsImage(graph);
 
     const config = { configurable: { thread_id: "1", userId: "1" } };
     const agentFinalState = await graph.invoke(
@@ -154,3 +163,4 @@ async function main() {
 
 // Call the main function
 main().catch((error) => console.error("Error in main:", error));
+//#endregion execution

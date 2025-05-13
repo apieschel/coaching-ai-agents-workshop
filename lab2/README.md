@@ -1,186 +1,324 @@
-# Intro
+# 🧙‍♂️ LangGraph Agent Workshop: Where Code Meets Magic!
 
-This directory contains a simple LangGraph. This directory contains a single graph, located inside the `index.ts` file.
+Welcome to Lab 2, where we'll transform your computer from a boring machine into an AI-powered oracle that can tell you both the time AND the weather! (Yes, we're basically wizards now.)
 
-- [Intro](#intro)
-  - [Setup](#setup)
-  - [Environment variables](#environment-variables)
-    - [LangGraph Config](#langgraph-config)
-    - [Tavily](#tavily)
-  - [Editing the project](#editing-the-project)
-    - [Code Regions](#code-regions)
-  - [Running the project](#running-the-project)
+> "Give a programmer a tool, and they'll solve one problem. Teach a programmer LangGraph, and they'll build an AI agent to solve their problems while they drink coffee." — Ancient Developer Proverb (circa 2023)
 
-## Setup
+## 🚀 What's in the Cauldron?
 
-To set up the intro project, install the dependencies:
+This magical repository contains a LangGraph agent with superpowers:
+- **Time Bending**: Can tell you the current time in any timezone (no DeLorean required)
+- **Weather Divination**: Can predict current weather conditions (more reliable than your local meteorologist)
+- **Mathematical Wizardry**: Comes with a calculator tool for when math gets hard
+- **Knowledge Seeking**: Uses Tavily search to find answers to your deepest questions
 
-```bash
-yarn install
-```
+## 📚 Table of Contents (Because Organization is Magic Too)
 
-## Environment variables
+- [🚀 Quick Setup](#-quick-setup)
+- [🔑 Secret Spells (API Keys)](#-secret-spells-api-keys)
+- [🛠️ Crafting Your Agent](#-crafting-your-agent)
+- [🧪 Potion Ingredients (Code Regions)](#-potion-ingredients-code-regions)
+- [🏃‍♂️ Running the Experiment](#-running-the-experiment)
+- [🧙‍♀️ The Magic Flow (Mermaid Diagram)](#-the-magic-flow-mermaid-diagram)
 
-The intro project requires Tavily and OpenAI API keys to run. Sign up here:
+## 🚀 Quick Setup
 
-- [OpenAI](https://platform.openai.com/signup)
-- [Tavily](https://tavily.com/)
-
-Once you have your API keys, create a `.env` file in this directory and add the following:
+To summon this agent to your machine, perform this incantation:
 
 ```bash
-TAVILY_API_KEY=YOUR_API_KEY
-OPENAI_API_KEY=YOUR_API_KEY
+npm install  # Gather the magical dependencies
 ```
 
-### LangGraph Config
+## 🔑 Secret Spells (API Keys & Environment Variables)
 
-The LangGraph configuration file for the intro project is located inside [`langgraph.json`](langgraph.json). This file defines the single graph implemented in the project: `simple_agent`.
+Our agent requires magical tokens to unlock its full potential. By default, you'll need:
 
-### Tavily
+- 🔍 [Tavily API Key](https://tavily.com/) - For web search capabilities
+- 🤖 [OpenAI API Key](https://platform.openai.com/signup) - For the AI brain (if using OpenAI)
 
-Follow these steps to obtain access to the Tavily API:
+Create a `.env` file in your magic circle (this directory) and add your chosen configuration.
 
-1. **Sign Up**
-   - Go to [Tavily's official website](https://tavily.com/) and create an account.
-   - Verify your email address to complete the registration process.
+### 📜 Summoning Different LLM Models
 
-2. **Access the Dashboard**
-   - Once logged in, navigate to the **Dashboard**.
-   - Here, you can manage your API keys, monitor usage, and configure settings.
+Our grimoire supports multiple AI models through the `LlmProviderManager`. You can easily switch between them by configuring the appropriate environment variables:
 
-3. **Generate Your API Key**
-   - Go to the **API Keys** section in the dashboard.
-   - Click on **Generate API Key** to create a new API key.
-   - Copy the API key, as you will need it for all API requests.
-
-## Editing the project
-
-To edit the project, open the `index.ts` file and make changes to the graph.
-
-### Code Regions
-
-1. **Imports**
-
-    This section imports necessary modules and components from `@langchain/langgraph`, `@langchain/core/messages`, and `model.js`.
-
-    ```typescript
-    import { ToolNode } from "@langchain/langgraph/prebuilt";
-    import {
-      END,
-      MessagesAnnotation,
-      START,
-      StateGraph,
-    } from "@langchain/langgraph";
-    import { AIMessage, BaseMessage, HumanMessage } from "@langchain/core/messages";
-    import { TavilySearchResults } from "@langchain/community/tools/tavily_search";
-    import { model } from "model.js";
-    ```
-
-    Look at `model.js`, it contains the model that will be used in the graph. We are using the Groq API.
-
-2. **Tools**
-
-    ```typescript
-    const webSearchTool = new TavilySearchResults({
-      maxResults: 4,
-    });
-    const tools = [webSearchTool];
-    const toolNode = new ToolNode(tools as any);
-    ```
-
-    - Initializes a web search tool with a maximum of 4 results.
-    - Creates a `ToolNode` with the initialized tools.
-
-3. **Model**
-
-    ```typescript
-    const callModel = async (state: typeof MessagesAnnotation.State) => {
-      const { messages } = state;
-      const llmWithTools = model.bindTools(tools);
-      const result = await llmWithTools.invoke(messages);
-      return { messages: [result] };
-    };
-    ```
-
-    - Defines an asynchronous function `callModel` that binds tools to the model and invokes it with the current messages.
-
-4. **Conditionals**
-
-    ```typescript
-    const shouldContinue = (state: typeof MessagesAnnotation.State) => {
-      const { messages } = state;
-      const lastMessage = messages[messages.length - 1];
-      if (
-        lastMessage._getType() !== "ai" ||
-        !(lastMessage as AIMessage).tool_calls?.length
-      ) {
-        return END;
-      }
-      return "tools";
-    };
-    ```
-
-    - Defines a function `shouldContinue` to determine whether the workflow should continue or end based on the last message.
-
-5. **Graph**
-
-    ```typescript
-    const workflow = new StateGraph(MessagesAnnotation)
-      .addNode("agent", callModel)
-      .addEdge(START, "agent")
-      .addNode("tools", toolNode)
-      .addEdge("tools", "agent")
-      .addConditionalEdges("agent", shouldContinue, ["tools", END]);
-
-    export const graph = workflow.compile({
-      // Uncomment if running locally
-      // checkpointer: new MemorySaver(),
-    });
-    graph.name = "graph";
-    ```
-
-    - Creates a `StateGraph` with nodes and edges, defining the workflow of the graph.
-
-6. **Draw Graph**
-
-    ```typescript
-    import { saveGraphAsImage } from "drawGraph.js";
-    await saveGraphAsImage(graph);
-    ```
-
-    - Imports a function to save the graph as an image and calls it.
-
-7. **Usage**
-
-    ```typescript
-    const agentFinalState = await graph.invoke(
-      { messages: [new HumanMessage("what is the current weather in sf")] },
-      { configurable: { thread_id: "42" } },
-    );
-
-    console.log(
-      agentFinalState.messages[agentFinalState.messages.length - 1].content,
-    );
-
-    const agentNextState = await graph.invoke(
-      { messages: [new HumanMessage("what about ny")] },
-      { configurable: { thread_id: "42" } },
-    );
-
-    console.log(
-      agentNextState.messages[agentNextState.messages.length - 1].content,
-    );
-    ```
-
-    - Demonstrates how to invoke the graph with initial messages and log the final state messages.
-
-## Running the project
-
-To run the intro project, use the following commands:
+#### 🧙‍♂️ GitHub Copilot (Default)
 
 ```bash
-yarn install
-yarn run build
-yarn run start
+# GitHub Copilot Configuration
+GITHUB_MODEL_NAME=gpt-4o-mini  # Or your preferred model
+GITHUB_TEMPERATURE=0.9  # Higher is more creative, lower is more predictable
+GITHUB_OPENAI_API_KEY=your_github_api_key  # Your GitHub Copilot API key
 ```
+
+#### 🔮 OpenAI
+
+```bash
+# OpenAI Configuration
+OPENAI_MODEL_NAME=gpt-4-turbo  # Or another model like gpt-3.5-turbo
+OPENAI_TEMPERATURE=0.7  # Adjust for creativity/predictability
+OPENAI_API_KEY=your_openai_api_key  # Get this from platform.openai.com
+```
+
+#### 🧪 Ollama (For Local Models)
+
+```bash
+# Ollama Configuration (for local deployment)
+OLLAMA_MODEL_NAME=llama3.2:latest   # Or any model you've pulled to Ollama
+OLLAMA_TEMPERATURE=0.8  # Adjust as needed
+OLLAMA_BASE_URL=http://localhost:11434  # Default Ollama URL
+```
+
+#### ☁️ Azure OpenAI
+
+```bash
+# Azure OpenAI Configuration
+AZURE_OPENAI_API_KEY=your_azure_api_key
+AZURE_OPENAI_ENDPOINT=your_azure_endpoint  # Something like https://your-resource.openai.azure.com/
+AZURE_OPENAI_API_DEPLOYMENT_NAME=your_deployment_name  # The name you gave your deployed model
+AZURE_OPENAI_MODEL_NAME=gpt-4  # The underlying model name
+AZURE_OPENAI_TEMPERATURE=0.7  # Adjust as needed
+```
+
+#### 🔄 Switching Between Models
+
+To change which model your agent uses, update the following line in `index.ts`:
+
+```typescript
+const model = await LlmProviderManager.getLlmProvider(LlmProvider.Github);
+```
+
+Change `LlmProvider.Github` to one of:
+- `LlmProvider.OpenAI`
+- `LlmProvider.Ollama`
+- `LlmProvider.Azure`
+- `LlmProvider.Anthropic`
+- `LlmProvider.Bedrock`
+
+And ensure you've set up the corresponding environment variables.
+
+#### ✨ Obtaining API Keys
+
+**For GitHub Copilot**: 
+- If you have access to GitHub Copilot already, contact your administrator for API access
+- The API key format differs from standard OpenAI keys
+
+**For OpenAI**:
+- Sign up at [platform.openai.com](https://platform.openai.com/signup)
+- Navigate to API Keys section
+- Create a new secret key and copy it immediately
+
+**For Azure OpenAI**:
+- Create an Azure account if you don't have one
+- Apply for Azure OpenAI access
+- Create an Azure OpenAI resource
+- Deploy your chosen models in the Azure OpenAI Studio
+- Get your endpoint and keys from the Azure portal
+
+**For Ollama**:
+- [Install Ollama](https://ollama.ai/download) on your machine
+- Pull models with `ollama pull modelname`
+- No API key needed as it runs locally!
+
+### 🧩 LangGraph Configuration
+
+The sacred configuration scroll is located at [`langgraph.json`](langgraph.json). It defines our agent's true name and purpose.
+
+### 🔍 Obtaining Your Tavily Crystal Ball
+
+1. **Join the Order of Tavily**
+   - Visit the [Tavily temple](https://tavily.com/) and pledge your allegiance (create an account)
+   - Verify your email to complete the ritual
+
+2. **Access the Sacred Dashboard**
+   - Navigate to the **Dashboard** chamber
+   - Here you'll find your usage stats and configuration options
+
+3. **Summon Your API Key**
+   - Find the **API Keys** section
+   - Click **Generate API Key** to forge your unique key
+   - Copy this key and guard it well! It contains great power!
+
+## 🛠️ Crafting Your Agent
+
+To modify your agent's abilities, open the magical grimoire (`index.ts`) and alter the runes as needed.
+
+## 🧪 Potion Ingredients (Code Regions)
+
+Our agent is crafted from several mystical components:
+
+### 1. 🪄 Model (The Brain)
+
+```typescript
+//#region model
+import {
+  LlmProviderManager,
+  LlmProvider,
+} from "./LlmProviderManager/LlmProviderManager.js";
+
+const model = await LlmProviderManager.getLlmProvider(LlmProvider.Github);
+//#endregion model
+```
+
+This component summons a powerful AI from GitHub to serve as the agent's mind.
+
+### 2. 🧰 Tools (The Powers)
+
+```typescript
+//#region tools
+const todayDateTimeSchema = z.object({
+  timeZone: z.string().describe("Time Zone Format"),
+  locale: z.string().describe("Locale string"),
+});
+
+// ...time and date tool implementation...
+
+const calculator = new Calculator();
+const tools = [dateTool, calculator, webSearchTool];
+const toolNode = new ToolNode(tools);
+//#endregion
+```
+
+Our agent wields three powerful artifacts:
+- A **Time Gazer** that reveals the current time in any realm (timezone)
+- A **Calculator** for solving mathematical mysteries
+- A **Web Search** tool that can traverse the vast knowledge of the internet
+
+### 3. 🧠 Logic (The Decision-Making)
+
+```typescript
+//#region workflow
+const shouldContinue = (state: typeof MessagesAnnotation.State) => {
+  const { messages } = state;
+  const lastMessage = messages[messages.length - 1];
+  if (
+    lastMessage._getType() !== "ai" ||
+    !(lastMessage as AIMessage).tool_calls?.length
+  ) {
+    return END;
+  }
+  return "tools";
+};
+
+// ...workflow definition...
+//#endregion workflow
+```
+
+This is where our agent decides whether to use tools or respond with its accumulated knowledge.
+
+### 4. 🗺️ Workflow (The Journey Map)
+
+```typescript
+const workflow = new StateGraph(MessagesAnnotation)
+  .addNode("agent", callModel)
+  .addNode("tools", toolNode)
+  .addEdge(START, "agent")
+  .addEdge("tools", "agent")
+  .addConditionalEdges("agent", shouldContinue, ["tools", END]);
+```
+
+This magical map guides our agent through decision trees, telling it when to think, when to use tools, and when to respond.
+
+### 5. 🚀 Execution (The Spell Casting)
+
+```typescript
+//#region execution
+// ...main function implementation...
+//#endregion execution
+```
+
+Here we activate our agent and command it to answer questions about weather and time in different locations.
+
+## 🏃‍♂️ Running the Experiment
+
+To bring your agent to life, perform this sequence of spells:
+
+```bash
+npm install  # Prepare the ingredients
+npm run build  # Mix the potion
+npm run start  # Speak the incantation
+```
+
+## 🧙‍♀️ The Magic Flow (Mermaid Diagram)
+
+Behold! The visualization of our agent's thought process:
+
+```mermaid
+graph TD
+    START([START]) --> agent
+    agent -- "Has tool calls?" --> tools
+    agent -- "No tool calls" --> END([END])
+    tools --> agent
+```
+
+This diagram shows how our agent thinks (the "agent" node), decides whether to use tools, and when to provide a final answer.
+
+![Agent Architecture Diagram](src/MermaidGraph/output/agent.jpeg)
+
+## 🏰 Architecture Explanation: How the Magic Works
+
+Our LangGraph agent operates through a carefully orchestrated cycle of thinking and acting:
+
+### 🧩 Components and their Magical Properties
+
+1. **Agent Node (The Brain)**: 
+   - This is where all the thinking happens
+   - The LLM processes input, decides what tools to use, and generates responses
+   - Receives input from the user and feedback from tool executions
+
+2. **Tools Node (The Hands)**:
+   - Contains three magical tools: Time Divination, Calculator, and Web Search
+   - Each tool serves a specific purpose and extends the agent's capabilities
+   - Tools execute tasks and return results back to the agent node
+
+3. **State Management (The Memory)**:
+   - Uses `MessagesAnnotation` to keep track of conversation history
+   - The `MemorySaver` checkpointer stores state between interactions
+   - Enables contextual awareness across multiple user questions
+
+### 🔄 The Flow of Magic
+
+The workflow follows these mystical steps:
+
+1. User query enters the system ("What's the weather in Dallas?")
+2. The START node activates the agent node
+3. The agent decides if it needs tools:
+   - If YES: Calls the appropriate tool(s) with necessary parameters
+   - If NO: Provides a direct answer and terminates at END
+4. When tools are used, results flow back to the agent
+5. Agent synthesizes tool results into a coherent response
+6. If the response is complete, the flow reaches END
+
+### 🔮 Decision Logic
+
+The secret sauce of our agent is the `shouldContinue` function that determines whether:
+- To use tools (when the agent's response contains tool calls)
+- To terminate and provide a final answer (when no more tools are needed)
+
+This architecture creates a powerful yet flexible system that can handle complex queries by breaking them down into tool-specific sub-tasks.
+
+---
+
+## 💡 Troubleshooting Common Enchantment Issues
+
+| Issue | Magical Solution |
+|-------|-----------------|
+| `Error: Authorization failed` | Your API key is invalid or missing. Double-check your `.env` file and ensure the proper environment variable is set. |
+| `Error: Missing token` | You forgot to include your API key in the `.env` file. |
+| `Error: Region is missing` | For AWS Bedrock, make sure you've specified the AWS_REGION. |
+| `Ollama connection refused` | Ensure Ollama is running locally with `ollama serve`. |
+| `Azure: Resource not found` | Verify your deployment name and endpoint in Azure portal. |
+| `The model '...' does not exist` | Check that you've specified a valid model name for your provider. |
+
+## 🧙‍♂️ LLM Provider Selection Guide
+
+| Provider | Best For | Pros | Cons |
+|----------|----------|------|------|
+| GitHub | Development tasks | Latest models, excellent coding | Requires GitHub Copilot access |
+| OpenAI | General purpose | Reliable, widely supported | Cost, requires internet |
+| Ollama | Privacy, offline use | Free, local, no data sharing | Limited capabilities vs cloud models |
+| Azure | Enterprise deployment | Security, compliance features | Setup complexity |
+| Anthropic | Safety, longer contexts | Great for content creation | Still emerging ecosystem |
+| Bedrock | AWS integration | Multiple models, enterprise security | AWS account required |
+
+Remember, with great AI power comes great responsibility! Use your agent wisely, and may your tokens be ever in your favor! 🧙‍♂️✨
