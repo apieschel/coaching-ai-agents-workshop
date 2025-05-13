@@ -1,0 +1,27 @@
+[
+  {
+    "id": 1,
+    "name": "Expelliarmus",
+    "description": "Disarming Charm",
+    "pronunciation": "ex-PELL-ee-ARE-muss",
+    "seenMentioned": "Used frequently throughout the series",
+    "etymology": "Latin expello meaning 'I drive away' and arma meaning 'weapons'",
+    "notes": "One of Harry Potter's signature spells",
+    "knownPractitioners": [
+      "Harry Potter",
+      "Severus Snape"
+    ],
+    "additionalItems": "Useful in duels",
+    "image": "/images/expelliarmus.jpg"
+  },
+  {
+    "name": "Alohomora",
+    "description": "Opens locks and doors.",
+    "pronunciation": "/ˌæləʊhəˈmɔːrə/",
+    "seenMentioned": "First introduced in \"Harry Potter and the Philosopher's Stone\", used several times throughout the series.",
+    "knownPractitioners": [
+      "Hermione Granger"
+    ],
+    "id": 1732155568037
+  }
+]
