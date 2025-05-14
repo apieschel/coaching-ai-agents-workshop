@@ -21,7 +21,7 @@
     "@langchain/anthropic": "^0.3.20",
     "@langchain/core": "^0.3.55",
     "@langchain/google-genai": "^0.2.8",
-    "@langchain/langgraph": "^0.2.714",
+    "@langchain/langgraph": "^0.2.72",
     "@langchain/langgraph-cli": "^0.0.32",
     "@langchain/openai": "^0.5.10",
     "@tavily/core": "^0.5.2",
