@@ -7,13 +7,13 @@ import { Annotation } from "@langchain/langgraph";
 import { BaseMessage } from "@langchain/core/messages";
 import { ToolNode } from "@langchain/langgraph/prebuilt";
 import { END, START } from "@langchain/langgraph";
-import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { z } from "zod";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { ChatOpenAI } from "@langchain/openai";
 import { AIMessage, HumanMessage } from "@langchain/core/messages";
 import { StateGraph } from "@langchain/langgraph";
-import readlineSync from 'readline-sync';
+// For readline-sync, install with: npm install readline-sync @types/readline-sync
+import * as readlineSync from 'readline-sync';
 
 // Define state
 const GraphState = Annotation.Root({
@@ -213,7 +213,16 @@ async function generate(state: typeof GraphState.State): Promise<Partial<typeof 
 
   const docs = lastToolMessage.content as string;
 
-  const prompt = await pull<ChatPromptTemplate>("rlm/rag-prompt");
+  // Change from using pull to a direct template instance
+  const promptTemplate = ChatPromptTemplate.fromTemplate(`
+  You are an assistant for question-answering tasks. 
+  Use the following pieces of retrieved context to answer the question. 
+  If you don't know the answer, just say that you don't know. 
+  
+  Context: {context}
+  
+  Question: {question}
+  `);
 
   const llm = new ChatOpenAI({
     model: "gpt-4o",
@@ -221,7 +230,7 @@ async function generate(state: typeof GraphState.State): Promise<Partial<typeof 
     streaming: true,
   });
 
-  const ragChain = prompt.pipe(llm);
+  const ragChain = promptTemplate.pipe(llm);
 
   const response = await ragChain.invoke({
     context: docs,
@@ -231,94 +240,6 @@ async function generate(state: typeof GraphState.State): Promise<Partial<typeof 
   return {
     messages: [response],
   };
-}
-
-// Function to initialize and run the application
-async function main() {
-  // Initialize retriever
-  retriever = await initializeRetriever();
-  
-  // Create tools after retriever is initialized
-  const tool = createRetrieverTool(
-    retriever,
-    {
-      name: "retrieve_blog_posts",
-      description:
-        "Search and return information about Lilian Weng blog posts on LLM agents, prompt engineering, and adversarial attacks on LLMs.",
-    },
-  );
-  tools = [tool];
-  
-  // Define the toolNode using the tools array
-  const toolNode = new ToolNode<typeof GraphState.State>(tools);
-  
-  // Define the graph
-  const workflow = new StateGraph(GraphState)
-    // Define the nodes which we'll cycle between.
-    .addNode("agent", agent)
-    .addNode("retrieve", toolNode)
-    .addNode("gradeDocuments", gradeDocuments)
-    .addNode("rewrite", rewrite)
-    .addNode("generate", generate);
-  
-  // Call agent node to decide to retrieve or not
-  workflow.addEdge(START, "agent");
-  
-  // Decide whether to retrieve
-  workflow.addConditionalEdges(
-    "agent",
-    // Assess agent decision
-    shouldRetrieve,
-  );
-  
-  workflow.addEdge("retrieve", "gradeDocuments");
-  
-  // Edges taken after the `action` node is called.
-  workflow.addConditionalEdges(
-    "gradeDocuments",
-    // Assess agent decision
-    checkRelevance,
-    {
-      // Call tool node
-      yes: "generate",
-      no: "rewrite", // placeholder
-    },
-  );
-  
-  workflow.addEdge("generate", END);
-  workflow.addEdge("rewrite", "agent");
-  
-  // Compile
-  const app = workflow.compile();
-  
-  // Get user input
-  let inputQuery = readlineSync.question('Please type the query: ');
-  
-  const inputs = {
-    messages: [
-      new HumanMessage(
-        inputQuery,
-      ),
-    ],
-  };
-  
-  let finalState;
-  for await (const output of await app.stream(inputs)) {
-    for (const [key, value] of Object.entries(output)) {
-      const lastMsg = output[key].messages[output[key].messages.length - 1];
-      console.log(`Output from node: '${key}'`);
-      console.dir({
-        type: lastMsg._getType(),
-        content: lastMsg.content,
-        tool_calls: lastMsg.tool_calls,
-      }, { depth: null });
-      console.log("---\n");
-      finalState = value;
-    }
-  }
-  
-  // console.log(JSON.stringify(finalState, null, 2));
-  console.log(finalState.messages[0].content);
 }
 
 // Helper function to initialize the retriever
@@ -349,11 +270,129 @@ async function initializeRetriever() {
   return vectorStore.asRetriever();
 }
 
+// Function to create retrievalTool since import isn't available
+function createRetrievalTool(retriever: any, config: any) {
+  return {
+    name: config.name,
+    description: config.description,
+    invoke: async (query: string) => {
+      const results = await retriever.getRelevantDocuments(query);
+      return results.map((doc: any) => doc.pageContent).join("\n\n");
+    }
+  };
+}
+
+// Function to initialize and run the application
+async function main() {
+  try {
+    // Initialize retriever
+    retriever = await initializeRetriever();
+    
+    // Create tools after retriever is initialized
+    const tool = createRetrievalTool(
+      retriever,
+      {
+        name: "retrieve_blog_posts",
+        description:
+          "Search and return information about Lilian Weng blog posts on LLM agents, prompt engineering, and adversarial attacks on LLMs.",
+      },
+    );
+    tools = [tool];
+    
+    // Define the toolNode using the tools array
+    const toolNode = new ToolNode<typeof GraphState.State>(tools);
+    
+    // Define the graph
+    const workflow = new StateGraph(GraphState)
+      // Define the nodes which we'll cycle between.
+      .addNode("agent", agent)
+      .addNode("retrieve", toolNode)
+      .addNode("gradeDocuments", gradeDocuments)
+      .addNode("rewrite", rewrite)
+      .addNode("generate", generate);
+    
+    // Call agent node to decide to retrieve or not
+    workflow.addEdge(START, "agent");
+    
+    // Decide whether to retrieve
+    workflow.addConditionalEdges(
+      "agent",
+      // Assess agent decision
+      shouldRetrieve,
+    );
+    
+    workflow.addEdge("retrieve", "gradeDocuments");
+    
+    // Edges taken after the `action` node is called.
+    workflow.addConditionalEdges(
+      "gradeDocuments",
+      // Assess agent decision
+      checkRelevance,
+      {
+        // Call tool node
+        yes: "generate",
+        no: "rewrite", // placeholder
+      },
+    );
+    
+    workflow.addEdge("generate", END);
+    workflow.addEdge("rewrite", "agent");
+    
+    // Compile
+    const app = workflow.compile();
+    
+    // Get user input
+    let inputQuery = readlineSync.question('Please type the query: ');
+    
+    const inputs = {
+      messages: [
+        new HumanMessage(
+          inputQuery,
+        ),
+      ],
+    };
+    
+    let finalState: any;
+    for await (const output of await app.stream(inputs)) {
+      for (const [key, value] of Object.entries(output)) {
+        const lastMsg = (output as any)[key].messages[(output as any)[key].messages.length - 1];
+        console.log(`Output from node: '${key}'`);
+        console.dir({
+          type: lastMsg._getType(),
+          content: lastMsg.content,
+          tool_calls: lastMsg.tool_calls,
+        }, { depth: null });
+        console.log("---\n");
+        finalState = value;
+      }
+    }
+    
+    if (finalState && finalState.messages && finalState.messages[0]) {
+      console.log(finalState.messages[0].content);
+    }
+
+    // Return the compiled workflow for external use
+    return workflow.compile();
+  } catch (error) {
+    console.error("Error in main function:", error);
+    throw error;
+  }
+}
+
 // Run the main function if this is the entry point
 if (require.main === module) {
   main().catch(console.error);
 }
 
-// We will export the graph from the main function
-// This is just a placeholder to avoid compilation errors
+// Export graph for external use
 export const graph = {};
+
+// Create a function to get the graph that can be imported by other files
+export async function getGraph() {
+  try {
+    return await main();
+  } catch (error) {
+    console.error("Error getting graph:", error);
+    throw error;
+  }
+}
