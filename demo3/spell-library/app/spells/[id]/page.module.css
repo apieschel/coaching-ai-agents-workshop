@@ -1,0 +1,180 @@
+/* page.module.css */
+.detailContainer {
+  background-color: #192a56;
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 2rem auto;
+  max-width: 800px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.spellTitle {
+  color: #ffc500;
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  font-family: 'Georgia', serif;
+}
+
+.detailSection {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.detailLabel {
+  font-weight: bold;
+  color: #ffc500;
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.detailContent {
+  color: #f0e6d2;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.emptyField {
+  color: #666;
+  font-style: italic;
+}
+
+.buttonContainer {
+  display: flex;
+  gap: 1rem;
+  margin: 2rem 0;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .buttonContainer {
+    flex-direction: column;
+  }
+}
+
+.actionButton {
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  border: none;
+  min-width: 120px;
+}
+
+.editButton {
+  background-color: #ffc500;
+  color: #0e1a40;
+}
+
+.editButton:hover {
+  background-color: #ffcc33;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.deleteButton {
+  background-color: #b71c1c;
+  color: white;
+}
+
+.deleteButton:hover {
+  background-color: #d32f2f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.backLink {
+  display: block;
+  text-align: center;
+  margin: 1rem 0;
+  padding: 0.75rem;
+  color: #ffc500;
+  text-decoration: none;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.backLink:hover {
+  color: #ffcc33;
+  text-decoration: underline;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  font-size: 1.2rem;
+  color: #ffc500;
+}
+
+.loadingSpinner {
+  border: 4px solid rgba(255, 197, 0, 0.3);
+  border-radius: 50%;
+  border-top: 4px solid #ffc500;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin-right: 10px;
+}
+
+.deleteModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background-color: #192a56;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.modalTitle {
+  color: #ffc500;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.modalButtons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 2rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+  .detailContainer {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+  
+  .spellTitle {
+    font-size: 2rem;
+  }
+  
+  .actionButton {
+    width: 100%;
+  }
+}
