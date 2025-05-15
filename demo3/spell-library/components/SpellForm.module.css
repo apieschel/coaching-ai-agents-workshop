@@ -1,0 +1,113 @@
+/* SpellForm.module.css */
+.formContainer {
+  max-width: 750px;
+  margin: 2rem auto;
+  background-color: #192a56;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.formTitle {
+  color: #ffc500;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-family: 'Georgia', serif;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.formGroup label {
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: #ffc500;
+  font-size: 1rem;
+}
+
+.formInput, .formTextarea {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 6px;
+  border: 2px solid #2a3f6d;
+  background-color: #f0e6d2;
+  color: #0e1a40;
+  font-size: 1rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.formInput:focus, .formTextarea:focus {
+  outline: none;
+  border-color: #ffc500;
+  box-shadow: 0 0 0 2px rgba(255, 197, 0, 0.2);
+}
+
+.formTextarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.formActions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  justify-content: center;
+}
+
+.submitButton, .cancelButton {
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  border: none;
+}
+
+.submitButton {
+  background-color: #ffc500;
+  color: #0e1a40;
+}
+
+.submitButton:hover {
+  background-color: #ffcc33;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.cancelButton {
+  background-color: #3f5387;
+  color: #ffc500;
+}
+
+.cancelButton:hover {
+  background-color: #4a5f9b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .formContainer {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+  
+  .formActions {
+    flex-direction: column;
+  }
+  
+  .submitButton, .cancelButton {
+    width: 100%;
+  }
+}

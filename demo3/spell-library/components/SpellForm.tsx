@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
+import styles from './SpellForm.module.css';
 
 interface SpellFormProps {
   isEditMode: boolean;
@@ -133,37 +134,114 @@ export default function SpellForm({ isEditMode, spellId }: SpellFormProps) {
   );
 
   return (
-    <div>
-      <h2>{isEditMode ? 'Edit Spell' : 'Add New Spell'}</h2>
-      <form onSubmit={handleSubmit}>
-        <label>Name:</label>
-        <input name="name" value={spellData.name} onChange={handleChange} required />
+    <div className={styles.formContainer}>
+      <h2 className={styles.formTitle}>
+        {isEditMode ? 'Edit Spell' : 'Add New Spell'}
+      </h2>
+      <form onSubmit={handleSubmit} className={styles.form}>
+        <div className={styles.formGroup}>
+          <label htmlFor="name">Name:</label>
+          <input 
+            id="name"
+            name="name" 
+            value={spellData.name} 
+            onChange={handleChange} 
+            required 
+            className={styles.formInput}
+          />
+        </div>
 
-        <label>Description:</label>
-        <textarea name="description" value={spellData.description} onChange={handleChange} required />
+        <div className={styles.formGroup}>
+          <label htmlFor="description">Description:</label>
+          <textarea 
+            id="description"
+            name="description" 
+            value={spellData.description} 
+            onChange={handleChange} 
+            required 
+            className={styles.formTextarea}
+          />
+        </div>
 
-        <label>Pronunciation:</label>
-        <input name="pronunciation" value={spellData.pronunciation} onChange={handleChange} />
+        <div className={styles.formGroup}>
+          <label htmlFor="pronunciation">Pronunciation:</label>
+          <input 
+            id="pronunciation"
+            name="pronunciation" 
+            value={spellData.pronunciation} 
+            onChange={handleChange} 
+            className={styles.formInput}
+          />
+        </div>
 
-        <label>Seen/Mentioned:</label>
-        <textarea name="seenMentioned" value={spellData.seenMentioned} onChange={handleChange} />
+        <div className={styles.formGroup}>
+          <label htmlFor="seenMentioned">Seen/Mentioned:</label>
+          <textarea 
+            id="seenMentioned"
+            name="seenMentioned" 
+            value={spellData.seenMentioned} 
+            onChange={handleChange} 
+            className={styles.formTextarea}
+          />
+        </div>
 
-        <label>Etymology:</label>
-        <textarea name="etymology" value={spellData.etymology} onChange={handleChange} />
+        <div className={styles.formGroup}>
+          <label htmlFor="etymology">Etymology:</label>
+          <textarea 
+            id="etymology"
+            name="etymology" 
+            value={spellData.etymology} 
+            onChange={handleChange} 
+            className={styles.formTextarea}
+          />
+        </div>
 
-        <label>Notes:</label>
-        <textarea name="notes" value={spellData.notes} onChange={handleChange} />
+        <div className={styles.formGroup}>
+          <label htmlFor="notes">Notes:</label>
+          <textarea 
+            id="notes"
+            name="notes" 
+            value={spellData.notes} 
+            onChange={handleChange} 
+            className={styles.formTextarea}
+          />
+        </div>
 
-        <label>Known Practitioners (comma-separated):</label>
-        <input name="knownPractitioners" value={spellData.knownPractitioners} onChange={handleChange} />
+        <div className={styles.formGroup}>
+          <label htmlFor="knownPractitioners">Known Practitioners (comma-separated):</label>
+          <input 
+            id="knownPractitioners"
+            name="knownPractitioners" 
+            value={spellData.knownPractitioners} 
+            onChange={handleChange} 
+            className={styles.formInput}
+          />
+        </div>
 
-        <label>Additional Items:</label>
-        <textarea name="additionalItems" value={spellData.additionalItems} onChange={handleChange} />
+        <div className={styles.formGroup}>
+          <label htmlFor="additionalItems">Additional Items:</label>
+          <textarea 
+            id="additionalItems"
+            name="additionalItems" 
+            value={spellData.additionalItems} 
+            onChange={handleChange} 
+            className={styles.formTextarea}
+          />
+        </div>
 
-        <button type="submit">{isEditMode ? 'Update Spell' : 'Add Spell'}</button>
+        <div className={styles.formActions}>
+          <button type="submit" className={styles.submitButton}>
+            {isEditMode ? 'Update Spell' : 'Add Spell'}
+          </button>
+          <button 
+            type="button" 
+            onClick={() => router.back()} 
+            className={styles.cancelButton}
+          >
+            Cancel
+          </button>
+        </div>
       </form>
-      <br />
-      <button onClick={() => router.back()}>Cancel</button>
     </div>
   )
 }
