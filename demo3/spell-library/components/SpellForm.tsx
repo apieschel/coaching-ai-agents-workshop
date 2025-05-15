@@ -100,28 +100,48 @@ export default function SpellForm({ isEditMode, spellId }: SpellFormProps) {
             name: "name",
             type: "string",
             description: "Name of the spell"
-          },
-          {
+              },
+              {
             name: "description",
             type: "string",
             description: "The description of the spell"
-          },
-          {
+              },
+              {
             name: "pronunciation",
             type: "string",
             description: "The pronunciation of the spell"
-          },
-          {
+              },
+              {
             name: "seenMentioned",
             type: "string",
-            description: "movies where the spell was mentioned"
-          },
-          {
+            description: "Movies where the spell was mentioned"
+              },
+              {
+            name: "etymology",
+            type: "string",
+            description: "Origin and history of the spell name"
+              },
+              {
+            name: "notes",
+            type: "string",
+            description: "Additional notes about the spell"
+              },
+              {
             name: "knownPractitioners",
             type: "string",
-            description: "Known practictioners of the spell"
-          }
-        ],
+            description: "Known practitioners of the spell"
+              },
+              {
+            name: "additionalItems",
+            type: "string",
+            description: "Additional items related to the spell"
+              },
+              {
+            name: "image",
+            type: "string",
+            description: "URL or reference to spell image"
+              }
+            ],
         },
       ],
       // Define the handler function to be executed when the action is called
