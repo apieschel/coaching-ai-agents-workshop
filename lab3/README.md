@@ -77,43 +77,60 @@ CopilotKit is the simplest way to integrate production-ready Copilots into any p
 
 Follow the instructions to get started with CopilotKit: [CopilotKit Tutorial](https://docs.copilotkit.ai/tutorials/ai-todo-app/overview)
 
-For Step2: To use Groq, modify app/api/route.ts
+For Step2: To use Github OpenAI Model, modify app/api/route.ts
   
   ```typescript
   import {
-    CopilotRuntime,
-    OpenAIAdapter,
-    copilotRuntimeNextJSAppRouterEndpoint,
-  } from '@copilotkit/runtime';
-  import { NextRequest } from 'next/server';
+  CopilotRuntime,
+  LangChainAdapter,
+  copilotRuntimeNextJSAppRouterEndpoint,
+} from '@copilotkit/runtime';
+import { ChatOpenAI } from "@langchain/openai";
+import { NextRequest } from 'next/server';
+ 
+// const model = new ChatOpenAI({ model: "gpt-4o", apiKey: process.env.OPENAI_API_KEY });
+// const serviceAdapter = new LangChainAdapter({
+//     chainFn: async ({ messages, tools }) => {
+//     return model.bindTools(tools).stream(messages);
+//     // or optionally enable strict mode
+//     // return model.bindTools(tools, { strict: true }).stream(messages);
+//   }
+// });
 
-  const runtime = new CopilotRuntime();
-  
-  async function getGroqAdapter() {
-    const { GroqAdapter } = await import("@copilotkit/runtime");
-    return new GroqAdapter();
-  }
-  export const POST = async (req: NextRequest) => {
-    const { handleRequest } = copilotRuntimeNextJSAppRouterEndpoint({
-      runtime,
-      serviceAdapter: await getGroqAdapter(),
-      endpoint: req.nextUrl.pathname,
-    });
-   
-    return handleRequest(req);
-  };
+async function getLangChainGithubOpenAIAdapter() {
+  const { LangChainAdapter } = await import("@copilotkit/runtime");
+  const { ChatOpenAI } = await import("@langchain/openai");
+  return new LangChainAdapter({
+    chainFn: async ({ messages, tools }) => {
+      const model = new ChatOpenAI({
+        modelName: "gpt-4o",
+        apiKey: process.env.GITHUB_OPENAI_API_KEY,
+        configuration: {
+          baseURL: 'https://models.inference.ai.azure.com'
+        }
+      }).bind(tools as any) as any;
+      return model.stream(messages, { tools });
+    },
+  });
+}
+
+const runtime = new CopilotRuntime();
+ 
+export const POST = async (req: NextRequest) => {
+  const { handleRequest } = copilotRuntimeNextJSAppRouterEndpoint({
+    runtime,
+    serviceAdapter: await getLangChainGithubOpenAIAdapter(),
+    endpoint: '/api/copilotkit',
+  });
+ 
+  return handleRequest(req);
+};
 
   ```
-
-install Groq
-```bash
-npm install @langchain/groq
-```
-
-  modify .env.local
+  modify .env
   add the following line and plug in your GROQ API key
   ```bash
-  GROQ_API_KEY=YOUR_GROQ_API
+  GITHUB_OPENAI_API_KEY=your_key
   ```
 
 ## Next Steps
@@ -148,7 +165,11 @@ After getting started with CopilotKit, you can explore the following advanced fe
 
    ```typescript
    import { CopilotKitCSSProperties, CopilotPopup, CopilotSidebar } from "@copilotkit/react-ui";
-
+....
+    <TasksProvider>
+      <TasksList />
+    </TasksProvider>
+    <!-- <CopilotPopup /> -->
    <div
      style={
        {

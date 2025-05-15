@@ -1,7 +1,6 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 import { defaultTasks } from "../default-tasks";
 import { Task, TaskStatus } from "../tasks.types";
-import { useCopilotReadable, useCopilotAction } from "@copilotkit/react-core"; 
 
 let nextId = defaultTasks.length + 1;
 
@@ -13,6 +12,8 @@ type TasksContextType = {
 };
 
 const TasksContext = createContext<TasksContextType | undefined>(undefined);
+
+import { useCopilotReadable, useCopilotAction } from "@copilotkit/react-core"; 
 
 export const TasksProvider = ({ children }: { children: ReactNode }) => {
   const [tasks, setTasks] = useState<Task[]>(defaultTasks);
@@ -34,15 +35,10 @@ export const TasksProvider = ({ children }: { children: ReactNode }) => {
       },
     ],
     handler: ({ title }) => {
-      //setTimeout(() => {  console.log('World!'); }, 5000)
       addTask(title);
     },
-    render: ({ status, result }) => {  
-      console.log("status:" + status);
-      return status === "complete" ? result : "Processing...";
-    },
   });
-
+ 
   useCopilotAction({
     name: "deleteTask",
     description: "Deletes a task from the todo list",
@@ -58,7 +54,7 @@ export const TasksProvider = ({ children }: { children: ReactNode }) => {
       deleteTask(id);
     },
   });
-
+ 
   useCopilotAction({
     name: "setTaskStatus",
     description: "Sets the status of a task",

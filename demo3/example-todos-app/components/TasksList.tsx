@@ -4,14 +4,10 @@ import { AddTodo } from "@/components/AddTodo";
 import { Task } from "@/components/Task";
 import { useTasks } from "@/lib/hooks/use-tasks";
 import { TaskStatus } from "@/lib/tasks.types";
-import { useCopilotChatSuggestions } from "@copilotkit/react-ui";
 import { AnimatePresence } from "framer-motion";
-
-import { useCopilotChat } from "@copilotkit/react-core";
-import { Role, TextMessage } from "@copilotkit/runtime-client-gql";
+import { useCopilotChatSuggestions } from "@copilotkit/react-ui";
 
 export function TasksList() {
-
   const { tasks } = useTasks();
   useCopilotChatSuggestions(
     {
@@ -21,7 +17,6 @@ export function TasksList() {
     },
     [tasks],
   );
-  
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-8 md:p-24">
       <div className="flex flex-col gap-4 min-w-full md:min-w-[500px]">

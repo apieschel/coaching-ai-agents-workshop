@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Suspense } from "react";
-
+import { CopilotKit } from "@copilotkit/react-core"; 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -18,7 +18,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Suspense>{children}</Suspense>
+        {/* <Suspense>{children}</Suspense> */}
+        {/* Make sure to use the URL you configured in the previous step  */}
+        <CopilotKit runtimeUrl="/api/copilotkit"> 
+          <Suspense>{children}</Suspense>
+        </CopilotKit>
       </body>
     </html>
   );
