@@ -119,10 +119,13 @@ export default function SpellList() {
                     {spell.name}
                   </Link>
                 </td>
-                <td className={styles.spellCell}>
-                  {spell.description && spell.description.length > 80
-                    ? `${spell.description.substring(0, 80)}...`
-                    : spell.description}
+                <td className={`${styles.spellCell} ${styles.descriptionCell}`}>
+                  {spell.description 
+                    ? spell.description.length > 150
+                      ? `${spell.description.substring(0, 150)}...`
+                      : spell.description
+                    : <span className={styles.emptyField}>No description available</span>
+                  }
                 </td>
               </tr>
             ))}
@@ -133,6 +136,16 @@ export default function SpellList() {
           {filteredSpells.map((spell) => (
             <Link key={spell.id} href={`/spells/${spell.id}`} className={styles.spellCard}>
               <div className={styles.spellName}>{spell.name}</div>
+              {spell.description && (
+                <div className={styles.cardDescription}>
+                  {spell.description}
+                </div>
+              )}
+              {!spell.description && (
+                <div className={styles.cardDescription}>
+                  <span className={styles.emptyField}>No description available</span>
+                </div>
+              )}
             </Link>
           ))}
         </div>

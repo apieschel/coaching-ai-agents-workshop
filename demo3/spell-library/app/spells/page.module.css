@@ -5,6 +5,7 @@
   padding: 2rem;
   margin: 2rem auto;
   max-width: 900px;
+  width: 90%;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
@@ -62,12 +63,13 @@
   background-color: #0e1a40;
   color: #ffc500;
   text-align: left;
-  padding: 1rem;
 }
 
 .tableHeader th {
   font-weight: bold;
   font-size: 1.1rem;
+  padding: 1rem;
+  border-bottom: 2px solid rgba(255, 197, 0, 0.3);
 }
 
 .spellRow {
@@ -85,6 +87,17 @@
 
 .spellCell {
   padding: 1rem;
+  vertical-align: top;
+}
+
+.descriptionCell {
+  font-size: 1rem;
+  color: #e0e0e0;
+  line-height: 1.6;
+  max-width: 500px;
+  background-color: rgba(255, 255, 255, 0.03);
+  border-radius: 4px;
+  padding: 1rem;
 }
 
 .spellLink {
@@ -94,6 +107,7 @@
   display: block;
   padding: 0.5rem 0;
   transition: all 0.2s ease;
+  font-size: 1.1rem;
 }
 
 .spellLink:hover {
@@ -134,32 +148,60 @@
 
 .cardGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  height: 85%;
+  gap: 2rem;
   margin-top: 2rem;
+  padding: 0.5rem;
 }
 
 .spellCard {
   background-color: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  padding: 1.5rem;
+  border-radius: 12px;
+  padding: 2rem;
   transition: all 0.3s ease;
-  border: 1px solid transparent;
+  border: 1px solid rgba(255, 197, 0, 0.1);
   height: 100%;
-}
-
-.spellCard:hover {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  min-height: 180px;
+  justify-content: center;
+}  .spellCard:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  border-color: rgba(255, 197, 0, 0.3);
+  box-shadow: 0 8px 20px rgba(255, 197, 0, 0.2);
+  border-color: rgba(255, 197, 0, 0.5);
+  background-color: rgba(255, 255, 255, 0.08);
 }
 
 .spellName {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   color: #ffc500;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   text-align: center;
   font-weight: bold;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.cardDescription {
+  color: #e0e0e0;
+  font-size: 1rem;
+  line-height: 1.6;
+  text-align: center;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.9;
+  max-height: 4.8rem; /* 3 lines × 1.6 line-height */
+}
+
+.emptyField {
+  color: #666;
+  font-style: italic;
 }
 
 .viewToggle {
@@ -192,7 +234,8 @@
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .spellListContainer {
-    margin: 1rem;
+    margin: 1rem auto;
+    width: 95%;
     padding: 1.5rem;
     border-radius: 8px;
   }
@@ -206,14 +249,33 @@
   }
   
   .cardGrid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    padding: 0.25rem;
   }
   
   .tableHeader th:nth-child(2) {
-    display: none;
+    display: table-cell;
   }
   
   .spellRow td:nth-child(2) {
-    display: none;
+    display: table-cell;
+  }
+  
+  .spellTable {
+    table-layout: fixed;
+  }
+  
+  .tableHeader th:first-child {
+    width: 40%;
+  }
+  
+  .tableHeader th:nth-child(2) {
+    width: 60%;
+  }
+  
+  .descriptionCell {
+    padding: 0.75rem;
+    font-size: 0.9rem;
   }
 }

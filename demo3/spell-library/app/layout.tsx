@@ -19,7 +19,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <nav>
             <Link href="/spells">Spell List</Link>
             <Link href="/spells/add">Add New Spell</Link>
-            <Link href="/chatbot">Chatbot</Link>
           </nav>
           <main>
             {children}
