@@ -1,4 +1,5 @@
 // @ts-ignore
+import "dotenv/config";
 import { CheerioWebBaseLoader } from "@langchain/community/document_loaders/web/cheerio";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { MemoryVectorStore } from "langchain/vectorstores/memory";
@@ -14,9 +15,13 @@ import { ChatOpenAI } from "@langchain/openai";
 import { AIMessage, HumanMessage } from "@langchain/core/messages";
 import { StateGraph } from "@langchain/langgraph";
 import readlineSync from 'readline-sync';
+import { createRetrieverTool } from "langchain/tools/retriever";
+import { pull } from "langchain/hub";
 
+//import { chat_node } from "./chat";
+//import { AgentState, AgentStateAnnotation } from "./state";
 // Define state
-const GraphState = Annotation.Root({
+const AgentState = Annotation.Root({
   messages: Annotation<BaseMessage[]>({
     value: (x, y) => x.concat(y),
     default: () => [],
@@ -31,10 +36,10 @@ let tools: any[] = [];
  * Decides whether the agent should retrieve more information or end the process.
  * This function checks the last message in the state for a function call. If a tool call is
  * present, the process continues to retrieve information. Otherwise, it ends the process.
- * @param {typeof GraphState.State} state - The current state of the agent, including all messages.
+ * @param {typeof AgentState.State} state - The current state of the agent, including all messages.
  * @returns {string} - A decision to either "continue" the retrieval process or "end" it.
  */
-function shouldRetrieve(state: typeof GraphState.State): string {
+function shouldRetrieve(state: typeof AgentState.State): string {
   const { messages } = state;
   console.log("---DECIDE TO RETRIEVE---");
   const lastMessage = messages[messages.length - 1];
@@ -53,10 +58,10 @@ function shouldRetrieve(state: typeof GraphState.State): string {
  * that document retrieval has been performed. It then evaluates the relevance of these documents to the user's
  * initial question using a predefined model and output parser. If the documents are relevant, the conversation
  * is considered complete. Otherwise, the retrieval process is continued.
- * @param {typeof GraphState.State} state - The current state of the agent, including all messages.
- * @returns {Promise<Partial<typeof GraphState.State>>} - The updated state with the new message added to the list of messages.
+ * @param {typeof AgentState.State} state - The current state of the agent, including all messages.
+ * @returns {Promise<Partial<typeof AgentState.State>>} - The updated state with the new message added to the list of messages.
  */
-async function gradeDocuments(state: typeof GraphState.State): Promise<Partial<typeof GraphState.State>> {
+async function gradeDocuments(state: typeof AgentState.State): Promise<Partial<typeof AgentState.State>> {
   console.log("---GET RELEVANCE---");
 
   const { messages } = state;
@@ -82,7 +87,7 @@ async function gradeDocuments(state: typeof GraphState.State): Promise<Partial<t
   );
 
   const model = new ChatOpenAI({
-    model: "gpt-4o",
+    model: process.env.OPENAI_MODEL_NAME,
     temperature: 0,
   }).bindTools([tool], {
     tool_choice: tool.name,
@@ -105,10 +110,10 @@ async function gradeDocuments(state: typeof GraphState.State): Promise<Partial<t
 /**
  * Check the relevance of the previous LLM tool call.
  *
- * @param {typeof GraphState.State} state - The current state of the agent, including all messages.
+ * @param {typeof AgentState.State} state - The current state of the agent, including all messages.
  * @returns {string} - A directive to either "yes" or "no" based on the relevance of the documents.
  */
-function checkRelevance(state: typeof GraphState.State): string {
+function checkRelevance(state: typeof AgentState.State): string {
   console.log("---CHECK RELEVANCE---");
 
   const { messages } = state;
@@ -135,10 +140,10 @@ function checkRelevance(state: typeof GraphState.State): string {
  * Invokes the agent model to generate a response based on the current state.
  * This function calls the agent model to generate a response to the current conversation state.
  * The response is added to the state's messages.
- * @param {typeof GraphState.State} state - The current state of the agent, including all messages.
- * @returns {Promise<Partial<typeof GraphState.State>>} - The updated state with the new message added to the list of messages.
+ * @param {typeof AgentState.State} state - The current state of the agent, including all messages.
+ * @returns {Promise<Partial<typeof AgentState.State>>} - The updated state with the new message added to the list of messages.
  */
-async function agent(state: typeof GraphState.State): Promise<Partial<typeof GraphState.State>> {
+async function agent(state: typeof AgentState.State): Promise<Partial<typeof AgentState.State>> {
   console.log("---CALL AGENT---");
 
   const { messages } = state;
@@ -166,14 +171,14 @@ async function agent(state: typeof GraphState.State): Promise<Partial<typeof Gra
 
 /**
  * Transform the query to produce a better question.
- * @param {typeof GraphState.State} state - The current state of the agent, including all messages.
- * @returns {Promise<Partial<typeof GraphState.State>>} - The updated state with the new message added to the list of messages.
+ * @param {typeof AgentState.State} state - The current state of the agent, including all messages.
+ * @returns {Promise<Partial<typeof AgentState.State>>} - The updated state with the new message added to the list of messages.
  */
-async function rewrite(state: typeof GraphState.State): Promise<Partial<typeof GraphState.State>> {
+async function rewrite(state: typeof AgentState.State): Promise<Partial<typeof AgentState.State>> {
   console.log("---TRANSFORM QUERY---");
 
   const { messages } = state;
-  const question = messages[0].content as string;
+  const question = messages[0].content as string;  
   const prompt = ChatPromptTemplate.fromTemplate(
     `Look at the input and try to reason about the underlying semantic intent / meaning. \n 
 Here is the initial question:
@@ -197,10 +202,10 @@ Formulate an improved question:`,
 
 /**
  * Generate answer
- * @param {typeof GraphState.State} state - The current state of the agent, including all messages.
- * @returns {Promise<Partial<typeof GraphState.State>>} - The updated state with the new message added to the list of messages.
+ * @param {typeof AgentState.State} state - The current state of the agent, including all messages.
+ * @returns {Promise<Partial<typeof AgentState.State>>} - The updated state with the new message added to the list of messages.
  */
-async function generate(state: typeof GraphState.State): Promise<Partial<typeof GraphState.State>> {
+async function generate(state: typeof AgentState.State): Promise<Partial<typeof AgentState.State>> {
   console.log("---GENERATE---");
 
   const { messages } = state;
@@ -236,7 +241,7 @@ async function generate(state: typeof GraphState.State): Promise<Partial<typeof 
 // Function to initialize and run the application
 async function main() {
   // Initialize retriever
-  retriever = await initializeRetriever();
+retriever = await initializeRetriever();
   
   // Create tools after retriever is initialized
   const tool = createRetrieverTool(
@@ -250,15 +255,16 @@ async function main() {
   tools = [tool];
   
   // Define the toolNode using the tools array
-  const toolNode = new ToolNode<typeof GraphState.State>(tools);
-  
+  const toolNode = new ToolNode<typeof AgentState.State>(tools);
   // Define the graph
-  const workflow = new StateGraph(GraphState)
+//  const workflow = new StateGraph(AgentStateAnnotation)
+  const workflow = new StateGraph(AgentState)
     // Define the nodes which we'll cycle between.
     .addNode("agent", agent)
     .addNode("retrieve", toolNode)
     .addNode("gradeDocuments", gradeDocuments)
     .addNode("rewrite", rewrite)
+    //.addNode("chat_node", chat_node)
     .addNode("generate", generate);
   
   // Call agent node to decide to retrieve or not
@@ -280,17 +286,20 @@ async function main() {
     checkRelevance,
     {
       // Call tool node
-      yes: "generate",
+      yes: "generate" ,//"chat_node",
       no: "rewrite", // placeholder
     },
   );
   
+  
+  //workflow.addEdge("chat_node", END);
   workflow.addEdge("generate", END);
   workflow.addEdge("rewrite", "agent");
   
   // Compile
-  const app = workflow.compile();
-  
+  const graph = workflow.compile();
+
+
   // Get user input
   let inputQuery = readlineSync.question('Please type the query: ');
   
@@ -303,7 +312,7 @@ async function main() {
   };
   
   let finalState;
-  for await (const output of await app.stream(inputs)) {
+  for await (const output of await graph.stream(inputs)) {
     for (const [key, value] of Object.entries(output)) {
       const lastMsg = output[key].messages[output[key].messages.length - 1];
       console.log(`Output from node: '${key}'`);
@@ -319,6 +328,9 @@ async function main() {
   
   // console.log(JSON.stringify(finalState, null, 2));
   console.log(finalState.messages[0].content);
+
+  
+  return graph;
 }
 
 // Helper function to initialize the retriever
@@ -349,11 +361,18 @@ async function initializeRetriever() {
   return vectorStore.asRetriever();
 }
 
+
 // Run the main function if this is the entry point
-if (require.main === module) {
-  main().catch(console.error);
-}
+// if (require.main === module) {
+//   export const graph = await main();
+//   //graph.catch(console.error);
+// }
+
+export const graph = main();
+
+
+
 
 // We will export the graph from the main function
 // This is just a placeholder to avoid compilation errors
-export const graph = {};
+//export const graph = {};
