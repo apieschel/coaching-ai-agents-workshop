@@ -1,0 +1,283 @@
+/* page.module.css */
+.spellListContainer {
+  background-color: #192a56;
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 2rem auto;
+  max-width: 900px;
+  width: 90%;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.searchContainer {
+  display: flex;
+  margin-bottom: 2rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.searchInput {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  border: 2px solid #2a3f6d;
+  background-color: #f0e6d2;
+  color: #0e1a40;
+  font-size: 1rem;
+  min-width: 200px;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #ffc500;
+  box-shadow: 0 0 0 2px rgba(255, 197, 0, 0.2);
+}
+
+.searchButton {
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  border: none;
+  background-color: #ffc500;
+  color: #0e1a40;
+}
+
+.searchButton:hover {
+  background-color: #ffcc33;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.spellTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.tableHeader {
+  background-color: #0e1a40;
+  color: #ffc500;
+  text-align: left;
+}
+
+.tableHeader th {
+  font-weight: bold;
+  font-size: 1.1rem;
+  padding: 1rem;
+  border-bottom: 2px solid rgba(255, 197, 0, 0.3);
+}
+
+.spellRow {
+  border-bottom: 1px solid rgba(255, 197, 0, 0.1);
+  transition: background-color 0.2s;
+}
+
+.spellRow:last-child {
+  border-bottom: none;
+}
+
+.spellRow:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.spellCell {
+  padding: 1rem;
+  vertical-align: top;
+}
+
+.descriptionCell {
+  font-size: 1rem;
+  color: #e0e0e0;
+  line-height: 1.6;
+  max-width: 500px;
+  background-color: rgba(255, 255, 255, 0.03);
+  border-radius: 4px;
+  padding: 1rem;
+}
+
+.spellLink {
+  color: #ffc500;
+  text-decoration: none;
+  font-weight: 500;
+  display: block;
+  padding: 0.5rem 0;
+  transition: all 0.2s ease;
+  font-size: 1.1rem;
+}
+
+.spellLink:hover {
+  color: #ffcc33;
+  transform: translateX(5px);
+}
+
+.noResults {
+  text-align: center;
+  padding: 2rem;
+  color: #f0e6d2;
+  font-style: italic;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: 1.2rem;
+  color: #ffc500;
+}
+
+.loadingSpinner {
+  border: 4px solid rgba(255, 197, 0, 0.3);
+  border-radius: 50%;
+  border-top: 4px solid #ffc500;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+  margin-right: 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  height: 85%;
+  gap: 2rem;
+  margin-top: 2rem;
+  padding: 0.5rem;
+}
+
+.spellCard {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 2rem;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 197, 0, 0.1);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  min-height: 180px;
+  justify-content: center;
+}
+
+.spellCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(255, 197, 0, 0.2);
+  border-color: rgba(255, 197, 0, 0.5);
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.spellName {
+  font-size: 1.5rem;
+  color: #ffc500;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-weight: bold;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.cardDescription {
+  color: #e0e0e0;
+  font-size: 1rem;
+  line-height: 1.6;
+  text-align: center;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.9;
+  max-height: 4.8rem; /* 3 lines × 1.6 line-height */
+}
+
+.emptyField {
+  color: #666;
+  font-style: italic;
+}
+
+.viewToggle {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  justify-content: flex-end;
+}
+
+.viewButton {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 4px;
+  color: #f0e6d2;
+  transition: all 0.2s;
+}
+
+.viewButton.active {
+  background-color: rgba(255, 197, 0, 0.2);
+  color: #ffc500;
+}
+
+.viewButton svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .spellListContainer {
+    margin: 1rem auto;
+    width: 95%;
+    padding: 1.5rem;
+    border-radius: 8px;
+  }
+  
+  .searchContainer {
+    flex-direction: column;
+  }
+  
+  .searchButton {
+    width: 100%;
+  }
+  
+  .cardGrid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    padding: 0.25rem;
+  }
+  
+  .tableHeader th:nth-child(2) {
+    display: table-cell;
+  }
+  
+  .spellRow td:nth-child(2) {
+    display: table-cell;
+  }
+  
+  .spellTable {
+    table-layout: fixed;
+  }
+  
+  .tableHeader th:first-child {
+    width: 40%;
+  }
+  
+  .tableHeader th:nth-child(2) {
+    width: 60%;
+  }
+  
+  .descriptionCell {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+}
