@@ -29,7 +29,7 @@ export type AgentState = typeof AgentStateAnnotation.State;
 // 4. Define a simple tool to get the weather statically
 const getWeather = tool(
   (args) => {
-    return `The weather for ${args.location} is 0 degrees.`;
+    return `The weather for ${args.location} is 70 degrees.`;
   },
   {
     name: "getWeather",
