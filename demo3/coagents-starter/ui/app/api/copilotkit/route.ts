@@ -3,6 +3,7 @@ import {
   CopilotRuntime,
   copilotRuntimeNextJSAppRouterEndpoint,
   ExperimentalEmptyAdapter,
+  langGraphPlatformEndpoint,
   // langGraphPlatformEndpoint
 } from "@copilotkit/runtime";
 
@@ -14,7 +15,7 @@ const runtime = new CopilotRuntime({
     // remove the remote action url below too.
     //
     langGraphPlatformEndpoint({
-      deploymentUrl: "https://fantastic-couscous-j9rqv9p7wfp54j-8123.app.github.dev:8123",
+      deploymentUrl: "http://localhost:8123",
       langsmithApiKey: process.env.LANGSMITH_API_KEY || "", // only used in LangGraph Platform deployments
       agents: [{
           name: 'sample_agent',
