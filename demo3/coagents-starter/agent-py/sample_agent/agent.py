@@ -42,7 +42,7 @@ tools = [
     # your_tool_here
 ]
 
-async def chat_node(state: AgentState, config: RunnableConfig) -> Command[Literal["tool_node", "__end__"]]:
+async def chat_node(state: AgentState, config: RunnableConfig) -> Command[Literal["tool_node", END]]:
     """
     Standard chat node based on the ReAct design pattern. It handles:
     - The model to use (and binds in CopilotKit actions and the tools defined above)

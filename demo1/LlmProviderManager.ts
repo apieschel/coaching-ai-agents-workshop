@@ -17,7 +17,7 @@ export enum LlmProvider {
 }
 
 export class LlmProviderManager {
-  static async getLlmProvider(llmProvider: LlmProvider = LlmProvider.Ollama): Promise<BaseChatModel> {
+  static async getLlmProvider(llmProvider: LlmProvider = LlmProvider.Github): Promise<BaseChatModel> {
     switch (llmProvider) {
 
       case LlmProvider.Ollama:
@@ -84,7 +84,7 @@ export class LlmProviderManager {
     }
   }
 
-  static async getEmbeddingsProvider(llmProvider: LlmProvider = LlmProvider.Ollama): Promise<Embeddings> {
+  static async getEmbeddingsProvider(llmProvider: LlmProvider = LlmProvider.Github): Promise<Embeddings> {
     switch (llmProvider) {
 
       case LlmProvider.Ollama:

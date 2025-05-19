@@ -1,6 +1,7 @@
 import { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { StateGraph, Annotation } from "@langchain/langgraph";
 import MermaidGraph from "../../MermaidGraph/MermaidGraph";
+import { END, START } from "@langchain/langgraph";
 
 export async function parallelization(llm: BaseChatModel) {
   // Graph state
@@ -46,18 +47,21 @@ export async function parallelization(llm: BaseChatModel) {
     .addNode("callLlm2", callLlm2)
     .addNode("callLlm3", callLlm3)
     .addNode("aggregator", aggregator)
-    .addEdge("__start__", "callLlm1")
-    .addEdge("__start__", "callLlm2")
-    .addEdge("__start__", "callLlm3")
+    .addEdge(START, "callLlm1")
+    .addEdge(START, "callLlm2")
+    .addEdge(START, "callLlm3")
     .addEdge("callLlm1", "aggregator")
     .addEdge("callLlm2", "aggregator")
     .addEdge("callLlm3", "aggregator")
-    .addEdge("aggregator", "__end__")
+    .addEdge("aggregator", END)
     .compile();
+
+  // Draw the agent graph
+  await MermaidGraph.drawMermaidByConsole(parallelWorkflow);
 
   // Draw the graph
   parallelWorkflow.name = "parallelWorkflow";
-  MermaidGraph.drawMermaidAsImage(parallelWorkflow);
+  await MermaidGraph.drawMermaidAsImage(parallelWorkflow);
 
   // Invoke
   const result = await parallelWorkflow.invoke({ topic: "cats" });

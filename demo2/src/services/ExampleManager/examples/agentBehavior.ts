@@ -4,6 +4,7 @@ import { AIMessage, HumanMessage } from "@langchain/core/messages";
 import { CompiledStateGraph, MessagesAnnotation, StateGraph } from "@langchain/langgraph";
 import { ToolNode } from "@langchain/langgraph/prebuilt";
 import MermaidGraph from "../../MermaidGraph/MermaidGraph";
+import { END, START } from "@langchain/langgraph";
 
 export async function agentBehavior(llm: BaseChatModel): Promise<CompiledStateGraph<any, any, any, any, any, any>> {
   // Define the tools for the agent to use
@@ -22,8 +23,8 @@ export async function agentBehavior(llm: BaseChatModel): Promise<CompiledStateGr
     if (lastMessage.tool_calls?.length) {
       return "tools";
     }
-    // Otherwise, we stop (reply to the user) using the special "__end__" node
-    return "__end__";
+    // Otherwise, we stop (reply to the user) using the special END node
+    return END;
   }
 
   // Define the function that calls the model
@@ -37,7 +38,7 @@ export async function agentBehavior(llm: BaseChatModel): Promise<CompiledStateGr
   // Define a new graph
   const workflow = new StateGraph(MessagesAnnotation)
     .addNode("agent", callModel)
-    .addEdge("__start__", "agent") // __start__ is a special name for the entrypoint
+    .addEdge(START, "agent") // __start__ is a special name for the entrypoint
     .addNode("tools", toolNode)
     .addEdge("tools", "agent")
     .addConditionalEdges("agent", shouldContinue);

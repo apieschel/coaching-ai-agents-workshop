@@ -92,8 +92,8 @@ function shouldContinue({ messages, copilotkit }: AgentState) {
     }
   }
 
-  // 7.4 Otherwise, we stop (reply to the user) using the special "__end__" node
-  return "__end__";
+  // 7.4 Otherwise, we stop (reply to the user) using the special END node
+  return END;
 }
 
 // Define the workflow graph

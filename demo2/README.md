@@ -37,8 +37,7 @@ To get started with this project, follow these steps:
 
 1. **Clone the repository**:
   ```bash
-  git clone https://github.com/hernangonzalezmoreno/langgraphjs-demos.git
-  cd langgraphjs-demos
+  cd demo2
   ```
 
 2. **Ensure you are using Node.js v20**:

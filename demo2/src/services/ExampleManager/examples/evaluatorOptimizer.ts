@@ -2,6 +2,7 @@ import { z } from "zod";
 import { Annotation, StateGraph } from "@langchain/langgraph";
 import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import MermaidGraph from "../../MermaidGraph/MermaidGraph";
+import { END, START } from "@langchain/langgraph";
 
 export async function evaluatorOptimizer(llm: BaseChatModel){
   // Graph state
@@ -64,22 +65,25 @@ export async function evaluatorOptimizer(llm: BaseChatModel){
   const optimizerWorkflow = new StateGraph(StateAnnotation)
     .addNode("llmCallGenerator", llmCallGenerator)
     .addNode("llmCallEvaluator", llmCallEvaluator)
-    .addEdge("__start__", "llmCallGenerator")
+    .addEdge(START, "llmCallGenerator")
     .addEdge("llmCallGenerator", "llmCallEvaluator")
     .addConditionalEdges(
       "llmCallEvaluator",
       routeJoke,
       {
         // Name returned by routeJoke : Name of next node to visit
-        "Accepted": "__end__",
+        "Accepted": END,
         "Rejected + Feedback": "llmCallGenerator",
       }
     )
     .compile();
   
+  // Draw the agent graph
+  await MermaidGraph.drawMermaidByConsole(optimizerWorkflow);
+
   // Draw the graph
   optimizerWorkflow.name = "evaluatorOptimizer";
-  MermaidGraph.drawMermaidAsImage(optimizerWorkflow);
+  await MermaidGraph.drawMermaidAsImage(optimizerWorkflow);
 
   // Invoke
   const state = await optimizerWorkflow.invoke({ topic: "Cats" });

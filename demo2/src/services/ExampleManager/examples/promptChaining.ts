@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { StateGraph, Annotation } from "@langchain/langgraph";
 import MermaidGraph from "../../MermaidGraph/MermaidGraph";
-
+import { END, START } from "@langchain/langgraph";
 export async function promptChaining(llm: BaseChatModel) {
   // Graph state
   const StateAnnotation = Annotation.Root({
@@ -50,18 +50,21 @@ export async function promptChaining(llm: BaseChatModel) {
     .addNode("generateJoke", generateJoke)
     .addNode("improveJoke", improveJoke)
     .addNode("polishJoke", polishJoke)
-    .addEdge("__start__", "generateJoke")
+    .addEdge(START, "generateJoke")
     .addConditionalEdges("generateJoke", checkPunchline, {
       Pass: "improveJoke",
-      Fail: "__end__"
+      Fail: END
     })
     .addEdge("improveJoke", "polishJoke")
-    .addEdge("polishJoke", "__end__")
+    .addEdge("polishJoke", END)
     .compile();
-  
+
+  // Draw the agent graph
+  await MermaidGraph.drawMermaidByConsole(chain);
+
   // Draw the graph
   chain.name = "promptChaining";
-  MermaidGraph.drawMermaidAsImage(chain);
+  await MermaidGraph.drawMermaidAsImage(chain);
   
   // Invoke
   const state = await chain.invoke({ topic: "cats" });

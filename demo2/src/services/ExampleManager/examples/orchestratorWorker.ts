@@ -2,6 +2,7 @@ import { z } from "zod";
 import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import { Annotation, StateGraph, Send } from "@langchain/langgraph";
 import MermaidGraph from "../../MermaidGraph/MermaidGraph";
+import { END, START } from "@langchain/langgraph";
 
 export async function orchestratorWorker(llm: BaseChatModel) {
   // Schema for structured output to use in planning
@@ -97,19 +98,22 @@ export async function orchestratorWorker(llm: BaseChatModel) {
     .addNode("orchestrator", orchestrator)
     .addNode("llmCall", llmCall)
     .addNode("synthesizer", synthesizer)
-    .addEdge("__start__", "orchestrator")
+    .addEdge(START, "orchestrator")
     .addConditionalEdges(
       "orchestrator",
       assignWorkers,
       ["llmCall"]
     )
     .addEdge("llmCall", "synthesizer")
-    .addEdge("synthesizer", "__end__")
+    .addEdge("synthesizer", END)
     .compile();
+
+  // Draw the agent graph
+  await MermaidGraph.drawMermaidByConsole(orchestratorWorker);
 
   // Draw the graph
   orchestratorWorker.name = "orchestratorWorker";
-  MermaidGraph.drawMermaidAsImage(orchestratorWorker);
+  await MermaidGraph.drawMermaidAsImage(orchestratorWorker);
 
   // Invoke
   const state = await orchestratorWorker.invoke({

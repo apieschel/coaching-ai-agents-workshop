@@ -2,6 +2,7 @@ import { z } from "zod";
 import { StateGraph, Annotation } from "@langchain/langgraph";
 import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import MermaidGraph from "../../MermaidGraph/MermaidGraph";
+import { END, START } from "@langchain/langgraph";
 
 export async function routing(llm: BaseChatModel) {
   // Schema for structured output to use as routing logic
@@ -92,19 +93,23 @@ export async function routing(llm: BaseChatModel) {
     .addNode("llmCall2", llmCall2)
     .addNode("llmCall3", llmCall3)
     .addNode("llmCallRouter", llmCallRouter)
-    .addEdge("__start__", "llmCallRouter")
+    .addEdge(START, "llmCallRouter")
     .addConditionalEdges(
       "llmCallRouter",
       routeDecision,
       ["llmCall1", "llmCall2", "llmCall3"],
     )
-    .addEdge("llmCall1", "__end__")
-    .addEdge("llmCall2", "__end__")
-    .addEdge("llmCall3", "__end__")
+    .addEdge("llmCall1", END)
+    .addEdge("llmCall2", END)
+    .addEdge("llmCall3", END)
     .compile();
 
+  // Draw the agent graph
+  await MermaidGraph.drawMermaidByConsole(routerWorkflow);
+
   // Draw the graph
-  MermaidGraph.drawMermaidAsImage(routerWorkflow);
+  routerWorkflow.name = "routerWorkflow";
+  await MermaidGraph.drawMermaidAsImage(routerWorkflow);
 
   // Invoke
   const state = await routerWorkflow.invoke({
