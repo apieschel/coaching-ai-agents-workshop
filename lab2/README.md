@@ -288,6 +288,7 @@ This magical map guides our agent through decision trees, telling it when to thi
 ### 5. 🚀 Execution (The Spell Casting)
 
 ```typescript
+
 //#region execution
 // Create main function to execute the code
 import MermaidGraph from "./MermaidGraph/MermaidGraph.js";
@@ -328,6 +329,7 @@ async function main() {
 // Call the main function
 main().catch((error) => console.error("Error in main:", error));
 //#endregion execution
+
 ```
 
 Here we activate our agent and command it to answer questions about weather and time in different locations.
