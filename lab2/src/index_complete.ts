@@ -130,7 +130,7 @@ async function main() {
   try {
     // Draw the agent graph
     graph.name = "agent";
-    MermaidGraph.drawMermaidAsImage(graph);
+    await MermaidGraph.drawMermaidAsImage(graph);
 
     const config = { configurable: { thread_id: "1", userId: "1" } };
     const agentFinalState = await graph.invoke(
