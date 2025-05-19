@@ -12,7 +12,7 @@ const model = await LlmProviderManager.getLlmProvider();
 
 const datasource = new DataSource({
     type: "sqlite",
-    database: "../sql/potter_movies.db",
+    database: "sql/potter_movies.db",
   });
   const db = await SqlDatabase.fromDataSourceParams({
     appDataSource: datasource,
